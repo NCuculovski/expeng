@@ -1657,7 +1657,7 @@ const Utils = (() => {
   const esc = (s) => String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
   const fmtPct = (n, d=1) => (n * 100).toFixed(d) + '%';
   const fmtNum = (n) => Number(n).toLocaleString('en-US');
-  const fmtCurrency = (n) => '$' + Number(n).toLocaleString('en-US', {minimumFractionDigits:0, maximumFractionDigits:0});
+  const fmtCurrency = (n) => '€' + Number(n).toLocaleString('en-US', {minimumFractionDigits:0, maximumFractionDigits:0});
   const fmtDate = (iso) => { const d=new Date(iso); return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); };
   const fmtRelative = (iso) => {
     const ms = Date.now() - new Date(iso).getTime();
@@ -2038,7 +2038,7 @@ const Utils = (() => {
     if (probability >= 85 && matchCount >= 8 && rev < 10000) {
       verdict = 'auto-approve';
       confidence = 'high';
-      rationale = probability + '% probability across ' + matchCount + ' similar experiments. Low impact ($' + Math.round(rev/1000) + 'K). Evidence is overwhelming - ship without testing.';
+      rationale = probability + '% probability across ' + matchCount + ' similar experiments. Low impact (€' + Math.round(rev/1000) + 'K). Evidence is overwhelming - ship without testing.';
       color = '#34c759';
       icon = 'approve';
     } else if (probability < 30 && matchCount >= 5) {
@@ -2057,7 +2057,7 @@ const Utils = (() => {
       verdict = 'test';
       confidence = 'medium';
       var reason = matchCount < 3 ? 'Insufficient Graph data (' + matchCount + ' matches).' : 'Mixed evidence (' + probability + '% probability).';
-      if (rev >= 50000) reason = 'High impact ($' + Math.round(rev/1000) + 'K/yr) warrants testing regardless of prediction.';
+      if (rev >= 50000) reason = 'High impact (€' + Math.round(rev/1000) + 'K/yr) warrants testing regardless of prediction.';
       rationale = reason + ' Run an experiment to validate before shipping.';
       color = '#af52de';
       icon = 'test';
@@ -3409,8 +3409,8 @@ const ViewDashboard = (() => {
           // Left: Revenue number
           bh += '<div onclick="Router.navigate(&#39;portfolio&#39;)" class="hv-hero-card" style="flex:1;min-width:0;padding:24px 28px;border-radius:20px;background:rgba(255,255,255,.06);cursor:pointer">';
           bh += '<div style="font-size:11px;font-weight:500;color:rgba(255,255,255,.35);margin-bottom:8px">Program Impact</div>';
-          bh += '<div style="font-size:clamp(36px,5vw,48px);font-weight:800;color:#34c759;letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums">$' + Math.round(_heroRev).toLocaleString() + '</div>';
-          bh += '<div style="font-size:12px;font-weight:500;color:rgba(255,255,255,.45);margin-top:10px;letter-spacing:-.01em">$' + Math.round(_heroRev / 52).toLocaleString() + '<span style="color:rgba(255,255,255,.25)">/week</span> \u00B7 ' + wins.length + ' <span style="color:rgba(255,255,255,.25)">shipped wins</span> \u00B7 ' + _heroAvgLift + '% <span style="color:rgba(255,255,255,.25)">avg lift</span></div>';
+          bh += '<div style="font-size:clamp(36px,5vw,48px);font-weight:800;color:#34c759;letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums">€' + Math.round(_heroRev).toLocaleString() + '</div>';
+          bh += '<div style="font-size:12px;font-weight:500;color:rgba(255,255,255,.45);margin-top:10px;letter-spacing:-.01em">€' + Math.round(_heroRev / 52).toLocaleString() + '<span style="color:rgba(255,255,255,.25)">/week</span> \u00B7 ' + wins.length + ' <span style="color:rgba(255,255,255,.25)">shipped wins</span> \u00B7 ' + _heroAvgLift + '% <span style="color:rgba(255,255,255,.25)">avg lift</span></div>';
 
           // Projected 12-month pill
           var _runExps = active.filter(function(e){ return e.status === 'running'; });
@@ -3426,7 +3426,7 @@ const ViewDashboard = (() => {
           if (_projected12 > _heroRev * 1.05) {
             bh += '<div style="margin-top:12px;display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border-radius:12px;background:rgba(52,199,89,.1)">';
             bh += '<span style="font-size:12px;color:rgba(52,199,89,.6)">↗ At current velocity →</span>';
-            bh += '<span style="font-size:13px;font-weight:700;color:#34c759;font-variant-numeric:tabular-nums;letter-spacing:-.02em">$' + Math.round(_projected12).toLocaleString() + '</span>';
+            bh += '<span style="font-size:13px;font-weight:700;color:#34c759;font-variant-numeric:tabular-nums;letter-spacing:-.02em">€' + Math.round(_projected12).toLocaleString() + '</span>';
             bh += '<span style="font-size:12px;color:rgba(52,199,89,.45)">projected 12-mo</span>';
             bh += '</div>';
           }
@@ -3436,7 +3436,7 @@ const ViewDashboard = (() => {
             bh += '<div style="display:flex;gap:6px;margin-top:12px;flex-wrap:wrap">';
             _heroDetails.slice(0, 3).forEach(function(d) {
               var _chipShare = _heroRev > 0 ? Math.round(d.annual / _heroRev * 100) : 0;
-              bh += '<div onclick="event.stopPropagation();Router.navigate(\'detail\',{id:\'' + Utils.esc(d.id) + '\'})" style="padding:4px 10px;border-radius:8px;background:rgba(255,255,255,.05);font-size:10px;color:rgba(255,255,255,.45);cursor:pointer;transition:background var(--dur-fast)" onmouseenter="this.style.background=\'rgba(255,255,255,.12)\'" onmouseleave="this.style.background=\'rgba(255,255,255,.05)\'"><span style="color:rgba(255,255,255,.7);font-weight:600">$' + Math.round(d.annual / 1000) + 'K</span> ' + Utils.esc(d.title.length > 20 ? d.title.substring(0,18) + '\u2026' : d.title) + ' <span style="color:rgba(255,255,255,.25)">' + _chipShare + '%</span></div>';
+              bh += '<div onclick="event.stopPropagation();Router.navigate(\'detail\',{id:\'' + Utils.esc(d.id) + '\'})" style="padding:4px 10px;border-radius:8px;background:rgba(255,255,255,.05);font-size:10px;color:rgba(255,255,255,.45);cursor:pointer;transition:background var(--dur-fast)" onmouseenter="this.style.background=\'rgba(255,255,255,.12)\'" onmouseleave="this.style.background=\'rgba(255,255,255,.05)\'"><span style="color:rgba(255,255,255,.7);font-weight:600">€' + Math.round(d.annual / 1000) + 'K</span> ' + Utils.esc(d.title.length > 20 ? d.title.substring(0,18) + '\u2026' : d.title) + ' <span style="color:rgba(255,255,255,.25)">' + _chipShare + '%</span></div>';
             });
             bh += '</div>';
           }
@@ -3982,7 +3982,7 @@ const ViewDashboard = (() => {
     });
     var synthesis = '';
     if (shipCount > 0) synthesis += shipCount + ' experiment' + (shipCount > 1 ? 's' : '') + ' ready to ship';
-    if (sprintRev > 0) synthesis += ' - ~$' + Math.round(sprintRev).toLocaleString() + '/yr projected impact. ';
+    if (sprintRev > 0) synthesis += ' - ~€' + Math.round(sprintRev).toLocaleString() + '/yr projected impact. ';
     else synthesis += '. ';
     if (riskCount > 0) synthesis += 'Onboarding needs immediate attention - guardrail breach is ongoing. ';
     if (flatCount > 0) synthesis += flatCount + ' test' + (flatCount > 1 ? 's are' : ' is') + ' trending null - consider reallocating traffic. ';
@@ -4234,7 +4234,7 @@ const ViewDashboard = (() => {
       if (_shipItems.length === 1) {
         var sv = _shipItems[0];
         h += '<div class="hb-txt"><strong>' + Utils.esc(sv.exp.title) + ' is ready to ship.</strong> I\u2019m ' + Math.round(sv.t.pb) + '% confident.';
-        if (_weeklyRev > 0) h += ' You\u2019re leaving about <strong style="color:#34c759">$' + Math.round(_weeklyRev / 100) * 100 + '/week</strong> on the table.';
+        if (_weeklyRev > 0) h += ' You\u2019re leaving about <strong style="color:#34c759">€' + Math.round(_weeklyRev / 100) * 100 + '/week</strong> on the table.';
         h += '</div>';
       } else {
         h += '<div class="hb-txt"><strong>' + _shipItems.length + ' experiments are ready to ship.</strong> ';
@@ -4243,7 +4243,7 @@ const ViewDashboard = (() => {
           h += 'I\u2019m ' + Math.round(sv.t.pb) + '% confident on ' + Utils.esc(sv.exp.title.split(' - ')[0].split(' - ')[0]);
         });
         h += '.';
-        if (_weeklyRev > 0) h += ' You\u2019re leaving about <strong style="color:#34c759">$' + Math.round(_weeklyRev / 100) * 100 + '/week</strong> on the table.';
+        if (_weeklyRev > 0) h += ' You\u2019re leaving about <strong style="color:#34c759">€' + Math.round(_weeklyRev / 100) * 100 + '/week</strong> on the table.';
         h += '</div>';
       }
 
@@ -4262,7 +4262,7 @@ const ViewDashboard = (() => {
         h += '<div style="font-size:22px;font-weight:700;color:#34c759;letter-spacing:-.03em;min-width:44px;text-align:right">' + spb + '%</div>';
         h += '<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;color:var(--text)">' + Utils.esc(se.title) + '</div>';
         h += '<div style="font-size:11px;color:var(--t4);margin-top:1px">' + slift + ' lift, stable ' + stable + 'd';
-        if (srev > 0) h += ' - $' + Math.round(srev / 1000) + 'K/yr';
+        if (srev > 0) h += ' - €' + Math.round(srev / 1000) + 'K/yr';
         h += '</div>';
         if (_memoryStrings[se.id]) h += '<div style="font-size:11px;color:var(--t4);font-style:italic;margin-top:2px">' + _memoryStrings[se.id] + '</div>';
         var _shipPred = Utils.predictSuccess(se, Store.select.experiments());
@@ -4342,7 +4342,7 @@ const ViewDashboard = (() => {
         h += '<div style="display:flex;gap:12px;font-size:11px;color:var(--t4)">';
         h += '<span style="color:' + dotColor + ';font-weight:600">' + sg.graphProbability + '% Probability</span>';
         if (sg.predictedLift !== '?') h += '<span>+' + sg.predictedLift + '% predicted</span>';
-        if (sg.predictedRev > 0) h += '<span style="color:var(--green-d)">$' + Math.round(sg.predictedRev / 1000) + 'K/yr</span>';
+        if (sg.predictedRev > 0) h += '<span style="color:var(--green-d)">€' + Math.round(sg.predictedRev / 1000) + 'K/yr</span>';
         h += '<span>' + Utils.esc(sg.metric || '') + '</span>';
         h += '</div>';
 
@@ -4358,7 +4358,7 @@ const ViewDashboard = (() => {
       // Combined projected revenue
       var _genTotalRev = _genSuggestions.reduce(function(s, g){ return s + (g.predictedRev || 0); }, 0);
       if (_genTotalRev > 0) {
-        h += '<div style="font-size:12px;color:var(--t3);margin-top:4px">Combined projected impact: <strong style="color:var(--green-d)">$' + Math.round(_genTotalRev / 1000) + 'K/yr</strong> if all ship.</div>';
+        h += '<div style="font-size:12px;color:var(--t3);margin-top:4px">Combined projected impact: <strong style="color:var(--green-d)">€' + Math.round(_genTotalRev / 1000) + 'K/yr</strong> if all ship.</div>';
       }
 
       h += '<div class="hb-btns">';
@@ -4616,7 +4616,7 @@ const ViewDashboard = (() => {
     metrics.forEach(function(m) {
       h += '<label><div style="font-size:11px;color:var(--t3);margin-bottom:4px">' + m.label + '</div>';
       h += '<div style="display:flex;align-items:center;gap:0;border:1px solid var(--border-s);border-radius:10px;overflow:hidden;background:var(--bg-deep)">';
-      h += '<span style="padding:8px 10px;font-size:13px;color:var(--t4);background:var(--bg);border-right:1px solid var(--border-s)">$</span>';
+      h += '<span style="padding:8px 10px;font-size:13px;color:var(--t4);background:var(--bg);border-right:1px solid var(--border-s)">€</span>';
       h += '<input id="rc-rpc-' + m.key + '" type="number" step="0.01" value="' + (rpc[m.key] !== undefined ? rpc[m.key] : m.def) + '" style="flex:1;padding:8px 10px;border:none;background:transparent;font-family:var(--f);font-size:13px;color:var(--text);outline:none;min-width:0"></div></label>';
     });
     h += '</div>';
@@ -4667,7 +4667,7 @@ const ViewDashboard = (() => {
     // Total banner
     h += '<div style="padding:16px 20px;background:var(--bg-deep);border-radius:14px;margin-bottom:20px;text-align:center">';
     h += '<div style="font-size:11px;font-weight:600;color:var(--t4);margin-bottom:4px">PROJECTED ANNUAL REVENUE</div>';
-    h += '<div id="wif-total" style="font-size:36px;font-weight:800;color:var(--green-d);letter-spacing:-.04em">$' + Math.round(totalRev).toLocaleString() + '</div>';
+    h += '<div id="wif-total" style="font-size:36px;font-weight:800;color:var(--green-d);letter-spacing:-.04em">€' + Math.round(totalRev).toLocaleString() + '</div>';
     h += '<div id="wif-delta" style="font-size:12px;color:var(--t4);margin-top:4px">Observed values</div>';
     h += '</div>';
 
@@ -4680,7 +4680,7 @@ const ViewDashboard = (() => {
       h += '<div style="font-size:13px;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:280px">' + Utils.esc(item.title) + '</div>';
       h += '<div style="display:flex;align-items:baseline;gap:6px">';
       h += '<span id="wif-lift-' + idx + '" style="font-size:15px;font-weight:700;color:var(--green-d)">+' + liftPct + '%</span>';
-      h += '<span id="wif-rev-' + idx + '" style="font-size:12px;color:var(--t3)">$' + Math.round(item.rev).toLocaleString() + '</span>';
+      h += '<span id="wif-rev-' + idx + '" style="font-size:12px;color:var(--t3)">€' + Math.round(item.rev).toLocaleString() + '</span>';
       h += '</div></div>';
       h += '<div style="display:flex;align-items:center;gap:10px">';
       h += '<span style="font-size:10px;color:var(--t4);min-width:24px">0%</span>';
@@ -4704,7 +4704,7 @@ const ViewDashboard = (() => {
     // HYPE insight
     h += '<div style="display:flex;gap:8px;align-items:flex-start;padding:12px 14px;background:var(--bg-deep);border-radius:10px">';
     h += '<div class="hype-orb" style="width:14px;height:14px;margin-top:2px"></div>';
-    h += '<div style="font-size:12px;color:var(--t2);line-height:1.5">Even at 50% of observed lifts, the program delivers $' + Math.round(totalRev * 0.5).toLocaleString() + ' - a ' + Math.round(totalRev * 0.5 / 52 / 100) + '\u00D7 return on a typical experimentation investment.</div>';
+    h += '<div style="font-size:12px;color:var(--t2);line-height:1.5">Even at 50% of observed lifts, the program delivers €' + Math.round(totalRev * 0.5).toLocaleString() + ' - a ' + Math.round(totalRev * 0.5 / 52 / 100) + '\u00D7 return on a typical experimentation investment.</div>';
     h += '</div>';
 
     h += '</div>';
@@ -4738,20 +4738,20 @@ const ViewDashboard = (() => {
       liftEl.textContent = '+' + pct + '%';
       liftEl.style.color = pct > 0 ? 'var(--green-d)' : 'var(--t4)';
     }
-    if (revEl) revEl.textContent = '$' + Math.round(item.rev).toLocaleString();
+    if (revEl) revEl.textContent = '€' + Math.round(item.rev).toLocaleString();
 
     // Update total
     var newTotal = items.reduce(function(s, i) { return s + i.rev; }, 0);
     var totalEl = document.getElementById('wif-total');
     var deltaEl = document.getElementById('wif-delta');
     if (totalEl) {
-      totalEl.textContent = '$' + Math.round(newTotal).toLocaleString();
+      totalEl.textContent = '€' + Math.round(newTotal).toLocaleString();
       totalEl.style.color = newTotal >= window._wifObservedTotal ? 'var(--green-d)' : 'var(--amber-d)';
     }
     if (deltaEl) {
       var diff = newTotal - window._wifObservedTotal;
       var pctDiff = window._wifObservedTotal > 0 ? Math.round(diff / window._wifObservedTotal * 100) : 0;
-      deltaEl.textContent = diff === 0 ? 'Observed values' : (diff > 0 ? '+' : '') + '$' + Math.round(diff).toLocaleString() + ' (' + (pctDiff > 0 ? '+' : '') + pctDiff + '%) vs observed';
+      deltaEl.textContent = diff === 0 ? 'Observed values' : (diff > 0 ? '+' : '') + '€' + Math.round(diff).toLocaleString() + ' (' + (pctDiff > 0 ? '+' : '') + pctDiff + '%) vs observed';
     }
   }
 
@@ -5202,7 +5202,7 @@ const ViewDashboard = (() => {
       // Escalation rules - force back to recommend
       var escalation = null;
       if (rev > (cfg.overrides.revenueCeiling || 50000) && v.action === 'Ship') {
-        escalation = 'Revenue impact $' + Math.round(rev / 1000) + 'K exceeds ceiling';
+        escalation = 'Revenue impact €' + Math.round(rev / 1000) + 'K exceeds ceiling';
         tier = 'recommend';
       }
       if (cfg.overrides.platforms && cfg.overrides.platforms[platform]) {
@@ -5391,7 +5391,7 @@ const ViewDetail = (() => {
             ${_cplxBadge(exp.complexity)}
           </div>
           <div style="font-size:clamp(22px,3vw,28px);font-weight:700;color:var(--text);letter-spacing:-.03em;line-height:1.2">${Utils.esc(exp.title)}</div>
-          ${hasResult && r.decision === 'ship' ? '<div style="display:inline-flex;align-items:center;gap:6px;margin-top:8px;padding:6px 14px;border-radius:10px;background:var(--green-bg)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--green-d)" stroke-width="2" width="14" height="14"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg><span style="font-size:13px;font-weight:600;color:var(--green-d)">$' + Math.round(Utils.calcExpRevenue(exp)).toLocaleString() + '/yr · $' + Math.round(Utils.calcExpRevenue(exp)/52).toLocaleString() + '/week</span></div>' : ''}
+          ${hasResult && r.decision === 'ship' ? '<div style="display:inline-flex;align-items:center;gap:6px;margin-top:8px;padding:6px 14px;border-radius:10px;background:var(--green-bg)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--green-d)" stroke-width="2" width="14" height="14"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg><span style="font-size:13px;font-weight:600;color:var(--green-d)">€' + Math.round(Utils.calcExpRevenue(exp)).toLocaleString() + '/yr · €' + Math.round(Utils.calcExpRevenue(exp)/52).toLocaleString() + '/week</span></div>' : ''}
           <div style="font-size:13px;color:var(--t3);margin-top:8px;display:flex;gap:16px;flex-wrap:wrap">
             <span>${Utils.esc(owner.name || '-')}</span>
             <span>Created ${Utils.fmtDate(exp.created_at)}</span>
@@ -5566,7 +5566,7 @@ const ViewDetail = (() => {
               sc+='<div><div style="font-size:11px;color:var(--green-d)">Variant</div><div style="font-size:22px;font-weight:700;color:var(--green-d);letter-spacing:-.02em">'+vari+'%</div></div>';
               sc+='<div style="flex:1"></div>';
               sc+='<div style="text-align:right"><div style="font-size:11px;color:var(--t4)">Lift</div><div style="font-size:22px;font-weight:700;color:var(--text);letter-spacing:-.02em">+'+lift+'%</div></div>';
-              if(rev>0) sc+='<div style="text-align:right;margin-left:16px"><div style="font-size:11px;color:var(--t4)">Revenue</div><div style="font-size:22px;font-weight:700;color:var(--green-d);letter-spacing:-.02em">$'+Math.round(rev/1000)+'K</div></div>';
+              if(rev>0) sc+='<div style="text-align:right;margin-left:16px"><div style="font-size:11px;color:var(--t4)">Revenue</div><div style="font-size:22px;font-weight:700;color:var(--green-d);letter-spacing:-.02em">€'+Math.round(rev/1000)+'K</div></div>';
               sc+='</div>';
             }
 
@@ -5772,7 +5772,7 @@ const ViewDetail = (() => {
               <div id="dt-opp-section" style="background:var(--card);border:1px solid var(--border-s);border-radius:14px;overflow:hidden">
                 <button onclick="ViewDetail.toggleTool('opp','${exp.id}')" style="width:100%;display:flex;align-items:center;gap:12px;padding:16px 18px;background:none;border:none;cursor:pointer;font-family:var(--f);text-align:left">
                   <div style="width:36px;height:36px;border-radius:10px;background:var(--bg-deep);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg viewBox="0 0 24 24" fill="none" stroke="var(--chrome-h)" stroke-width="1.5" width="18" height="18"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
-                  <div class="f1"><div class="t-heading">Opportunity Sizing</div><div style="font-size:11px;color:var(--t3);margin-top:1px">${exp.oppCalc ? 'Saved: $' + Math.round(exp.oppCalc.annual).toLocaleString() + '/yr annualised impact' : 'Model revenue impact before committing resources'}</div></div>
+                  <div class="f1"><div class="t-heading">Opportunity Sizing</div><div style="font-size:11px;color:var(--t3);margin-top:1px">${exp.oppCalc ? 'Saved: €' + Math.round(exp.oppCalc.annual).toLocaleString() + '/yr annualised impact' : 'Model revenue impact before committing resources'}</div></div>
                   ${exp.oppCalc ? '<span style="display:flex;align-items:center;gap:4px;font-size:10px;font-weight:600;color:var(--green-d)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="10" height="10"><polyline points="20 6 9 17 4 12"/></svg>Saved</span>' : ''}
                   <svg viewBox="0 0 24 24" fill="none" stroke="var(--t4)" stroke-width="2" width="14" height="14" id="dt-opp-chevron" style="transition:transform var(--dur-fast);flex-shrink:0"><polyline points="6 9 12 15 18 9"/></svg>
                 </button>
@@ -5781,7 +5781,7 @@ const ViewDetail = (() => {
                     <div class="v2-field"><label class="v2-field-label">Baseline Conv. Rate (%)</label><input class="v2-input" type="number" step="0.1" id="dt-opp-base" value="${exp.oppCalc ? exp.oppCalc.base : '2.5'}"></div>
                     <div class="v2-field"><label class="v2-field-label">Expected Lift (%)</label><input class="v2-input" type="number" step="1" id="dt-opp-lift" value="${exp.oppCalc ? exp.oppCalc.lift : '10'}"></div>
                     <div class="v2-field"><label class="v2-field-label">Weekly Eligible Visits</label><input class="v2-input" type="number" step="1000" id="dt-opp-traffic" value="${exp.oppCalc ? exp.oppCalc.traffic : '50000'}"></div>
-                    <div class="v2-field"><label class="v2-field-label">Revenue per Conv. ($)</label><input class="v2-input" type="number" step="1" id="dt-opp-rev" value="${exp.oppCalc ? exp.oppCalc.rev : '45'}"></div>
+                    <div class="v2-field"><label class="v2-field-label">Revenue per Conv. (€)</label><input class="v2-input" type="number" step="1" id="dt-opp-rev" value="${exp.oppCalc ? exp.oppCalc.rev : '45'}"></div>
                   </div>
                   <div id="dt-opp-result" style="margin-bottom:12px"></div>
                   <div style="display:flex;gap:8px">
@@ -5814,8 +5814,8 @@ const ViewDetail = (() => {
                   <div class="v2-detail-card">
                     <div class="v2-detail-card-label">Opportunity Sizing</div>
                     <div style="font-size:12px;color:var(--t2);margin-top:6px;line-height:1.6">
-                      <div class="kv-row"><span class="c-t3">Weekly impact</span><span class="fw600">$${Math.round(exp.oppCalc.weekly).toLocaleString()}</span></div>
-                      <div class="kv-row"><span class="c-t3">Annual impact</span><span style="font-weight:600;color:var(--green-d)">$${Math.round(exp.oppCalc.annual).toLocaleString()}</span></div>
+                      <div class="kv-row"><span class="c-t3">Weekly impact</span><span class="fw600">€${Math.round(exp.oppCalc.weekly).toLocaleString()}</span></div>
+                      <div class="kv-row"><span class="c-t3">Annual impact</span><span style="font-weight:600;color:var(--green-d)">€${Math.round(exp.oppCalc.annual).toLocaleString()}</span></div>
                       <div class="kv-row"><span class="c-t3">Incr. conv./wk</span><span class="fw600">+${exp.oppCalc.incrConv.toLocaleString()}</span></div>
                       <div class="kv-row"><span class="c-t3">Baseline → projected</span><span class="fw600">${exp.oppCalc.base}% → ${exp.oppCalc.newRate}%</span></div>
                     </div>
@@ -6430,7 +6430,7 @@ const ViewDetail = (() => {
             ph += '<div style="font-size:42px;font-weight:700;color:' + pred.tierColor + ';letter-spacing:-.04em;line-height:1">' + pred.probability + '%</div>';
             ph += '<div><div style="font-size:14px;font-weight:600;color:var(--text)">predicted chance of success</div>';
             ph += '<div style="font-size:12px;color:var(--t3)">+' + pred.predictedLiftPct + '% predicted lift \u00B7 ~' + pred.predictedRuntime + ' day runtime</div>';
-            if (pred.predictedRev > 0) ph += '<div style="font-size:12px;color:var(--green-d);font-weight:500">$' + Math.round(pred.predictedRev / 1000) + 'K/yr projected revenue</div>';
+            if (pred.predictedRev > 0) ph += '<div style="font-size:12px;color:var(--green-d);font-weight:500">€' + Math.round(pred.predictedRev / 1000) + 'K/yr projected revenue</div>';
             ph += '</div></div>';
             ph += '<div style="font-size:13px;color:var(--t2);line-height:1.55">' + Utils.esc(pred.recommendation) + '</div>';
           }
@@ -6605,8 +6605,8 @@ const ViewDetail = (() => {
     _lastOpp = {base:base, lift:lift, traffic:traffic, rev:rev, weekly:weekly, annual:annual, incrConv:incrConv, newRate:newRate};
     var el = document.getElementById('dt-opp-result');
     if (el) el.innerHTML = '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px">' +
-      '<div class="v2-stat-card p10" ><div class="v2-stat-val" style="font-size:16px">$' + Math.round(weekly).toLocaleString() + '</div><div class="v2-stat-label">Weekly</div></div>' +
-      '<div class="v2-stat-card p10" ><div class="v2-stat-val" style="font-size:16px;color:var(--green-d)">$' + Math.round(annual).toLocaleString() + '</div><div class="v2-stat-label">Annual</div></div>' +
+      '<div class="v2-stat-card p10" ><div class="v2-stat-val" style="font-size:16px">€' + Math.round(weekly).toLocaleString() + '</div><div class="v2-stat-label">Weekly</div></div>' +
+      '<div class="v2-stat-card p10" ><div class="v2-stat-val" style="font-size:16px;color:var(--green-d)">€' + Math.round(annual).toLocaleString() + '</div><div class="v2-stat-label">Annual</div></div>' +
       '<div class="v2-stat-card p10" ><div class="v2-stat-val" style="font-size:16px;color:var(--green-d)">+' + incrConv.toLocaleString() + '</div><div class="v2-stat-label">Conv./wk</div></div></div>';
     var saveBtn = document.getElementById('dt-opp-save');
     if (saveBtn) saveBtn.style.display = '';
@@ -6774,7 +6774,7 @@ const ViewExperiments = (() => {
             if(sig && lift < -0.02) return '<span style="font-size:11px;font-weight:800;padding:4px 10px;border-radius:8px;letter-spacing:-.02em;background:var(--red);color:#fff">'+pct+'</span>';
             if(sig && lift < 0) return '<span style="font-size:11px;font-weight:800;padding:4px 10px;border-radius:8px;letter-spacing:-.02em;background:rgba(255,59,48,.1);color:var(--red)">'+pct+'</span>';
             return '<span style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:8px;letter-spacing:-.02em;background:var(--bg-deep);color:var(--t3)">'+pct+'</span>';
-          })(exp.result) : '')+(exp.result && exp.result.decision === 'ship' ? (function(){var rev=Utils.calcExpRevenue(exp);return rev>0?'<span style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;background:rgba(52,199,89,.08);color:var(--green-d)">$'+Math.round(rev/1000)+'K/yr</span>':'';})() : '')+'</span>'+
+          })(exp.result) : '')+(exp.result && exp.result.decision === 'ship' ? (function(){var rev=Utils.calcExpRevenue(exp);return rev>0?'<span style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;background:rgba(52,199,89,.08);color:var(--green-d)">€'+Math.round(rev/1000)+'K/yr</span>':'';})() : '')+'</span>'+
         '</div>'+
         (exp.tags.length>0?'<div class="v2-exp-card-tags">'+exp.tags.slice(0,3).map(function(t){return '<span class="v2-tag v2-tag-click" onclick="event.stopPropagation();ViewExperiments.setTagFilter(\''+Utils.esc(t)+'\')">'+Utils.esc(t)+'</span>';}).join('')+'</div>':'')+
       '</button>';
@@ -8659,7 +8659,7 @@ const ViewIntake = (() => {
             _gwHtml += '<div style="display:flex;gap:8px;margin-bottom:10px">';
             _gwHtml += '<div style="flex:1;background:var(--bg-deep);border-radius:8px;padding:8px 10px;text-align:center"><div style="font-size:16px;font-weight:700;color:var(--text)">+' + _pred.predictedLiftPct + '%</div><div style="font-size:10px;color:var(--t4)">predicted lift</div></div>';
             _gwHtml += '<div style="flex:1;background:var(--bg-deep);border-radius:8px;padding:8px 10px;text-align:center"><div style="font-size:16px;font-weight:700;color:var(--text)">' + _pred.predictedRuntime + 'd</div><div style="font-size:10px;color:var(--t4)">predicted runtime</div></div>';
-            if (_pred.predictedRev > 0) _gwHtml += '<div style="flex:1;background:var(--bg-deep);border-radius:8px;padding:8px 10px;text-align:center"><div style="font-size:16px;font-weight:700;color:var(--green-d)">$' + Math.round(_pred.predictedRev / 1000) + 'K</div><div style="font-size:10px;color:var(--t4)">projected/yr</div></div>';
+            if (_pred.predictedRev > 0) _gwHtml += '<div style="flex:1;background:var(--bg-deep);border-radius:8px;padding:8px 10px;text-align:center"><div style="font-size:16px;font-weight:700;color:var(--green-d)">€' + Math.round(_pred.predictedRev / 1000) + 'K</div><div style="font-size:10px;color:var(--t4)">projected/yr</div></div>';
             _gwHtml += '</div>';
 
             // Recommendation
@@ -9576,7 +9576,7 @@ const ViewPortfolio = (() => {
 
     if (wins.length > 0) {
       var _hypeTotalRev = Utils.calcProgramRevenue(wins);
-      if (_hypeTotalRev > 0) hypeBrief.push('$' + Math.round(_hypeTotalRev).toLocaleString() + '/yr revenue impact across ' + wins.length + ' shipped experiments.');
+      if (_hypeTotalRev > 0) hypeBrief.push('€' + Math.round(_hypeTotalRev).toLocaleString() + '/yr revenue impact across ' + wins.length + ' shipped experiments.');
     }
 
     h += '<div style="padding:20px 24px;margin-bottom:20px;border-radius:16px;background:var(--card);box-shadow:0 1px 3px rgba(0,0,0,.04),0 4px 12px rgba(0,0,0,.03)">';
@@ -10669,12 +10669,25 @@ const ViewConnect = (() => {
     { cat:'CDPs & Orchestration', items:[
       { name:'Segment', svg:'<circle cx="12" cy="12" r="3" fill="none" stroke="#52bd95" stroke-width="1.5"/><circle cx="4" cy="8" r="2" fill="none" stroke="#52bd95" stroke-width="1.5"/><circle cx="4" cy="16" r="2" fill="none" stroke="#52bd95" stroke-width="1.5"/><circle cx="20" cy="8" r="2" fill="none" stroke="#52bd95" stroke-width="1.5"/><circle cx="20" cy="16" r="2" fill="none" stroke="#52bd95" stroke-width="1.5"/><path d="M6 8.5l4 2.5M6 15.5l4-2.5M14.5 10.5l4-1.5M14.5 13.5l4 1.5" stroke="#52bd95" stroke-width="1" opacity=".5"/>', status:'connected', lastSync:'35 min ago', syncMins:35, tables:[{n:'experiment_events',r:'920K'},{n:'identify_calls',r:'180K'}], rows:'1.1M', health:'green', schema:'segment.experiment_events', keyExpires:90 },
       { name:'dbt', svg:'<path d="M12 3l8 4.5v9L12 21l-8-4.5v-9L12 3z" fill="none" stroke="#ff694a" stroke-width="1.5" stroke-linejoin="round"/><path d="M12 12v9M4 7.5l8 4.5 8-4.5" fill="none" stroke="#ff694a" stroke-width="1" opacity=".5"/><circle cx="12" cy="12" r="2" fill="#ff694a"/>', status:'available', fields:['dbt Cloud URL','API Token','Job ID','Environment'] }
+    ]},
+    { cat:'Media Platforms', items:[
+      { name:'Meta Ads', svg:'<path d="M4 14c0-5 2.5-9 6-9 2.5 0 4 2 5.5 5s3 5 5 5c1.5 0 2.5-1 2.5-3s-1-3-2.5-3c-1.5 0-2.5 1-3.5 2.5" fill="none" stroke="#0866ff" stroke-width="2" stroke-linecap="round"/><path d="M4 14c0 3 1.5 5 4 5 2 0 3.5-1.5 5-4" fill="none" stroke="#0866ff" stroke-width="2" stroke-linecap="round"/>', status:'connected', lastSync:'22 min ago', syncMins:22, tables:[{n:'fb_ad_performance',r:'340K'},{n:'fb_audience_insights',r:'85K'},{n:'ig_ad_performance',r:'210K'}], rows:'635K', health:'green', schema:'meta.ads_performance', keyExpires:58 },
+      { name:'Google Ads', svg:'<path d="M9 20L3 10l6-6 6 10-6 6z" fill="none" stroke="#fbbc04" stroke-width="1.5" stroke-linejoin="round"/><circle cx="17" cy="17" r="3" fill="none" stroke="#34a853" stroke-width="1.5"/><path d="M15 4l6 10" stroke="#4285f4" stroke-width="1.5" stroke-linecap="round"/>', status:'connected', lastSync:'18 min ago', syncMins:18, tables:[{n:'search_campaign_stats',r:'480K'},{n:'display_campaign_stats',r:'220K'},{n:'keyword_performance',r:'95K'}], rows:'795K', health:'green', schema:'gads.campaign_performance', keyExpires:30 },
+      { name:'LinkedIn Ads', svg:'<rect x="3" y="3" width="18" height="18" rx="3" fill="none" stroke="#0a66c2" stroke-width="1.5"/><rect x="6" y="10" width="2.5" height="7" fill="#0a66c2"/><circle cx="7.25" cy="7.25" r="1.25" fill="#0a66c2"/><path d="M11 10v7M11 13c0-1.5 1-3 2.75-3s2.75 1.5 2.75 3v4" fill="none" stroke="#0a66c2" stroke-width="2" stroke-linecap="round"/>', status:'connected', lastSync:'1h ago', syncMins:58, tables:[{n:'linkedin_campaign_stats',r:'42K'},{n:'linkedin_lead_gen_forms',r:'8K'}], rows:'50K', health:'amber', schema:'linkedin.sponsored_content', keyExpires:12 },
+      { name:'TikTok Ads', svg:'<path d="M14 4v10.5a3.5 3.5 0 11-3.5-3.5" fill="none" stroke="#25f4ee" stroke-width="1.8" stroke-linecap="round"/><path d="M15 4v10.5a3.5 3.5 0 11-3.5-3.5" fill="none" stroke="#fe2c55" stroke-width="1.8" stroke-linecap="round" transform="translate(1.5 0.5)"/><path d="M14 4c1 2.5 3 4 5 4" fill="none" stroke="#000" stroke-width="1.8" stroke-linecap="round"/>', status:'available', fields:['Advertiser ID','Access Token','App ID'] },
+      { name:'X Ads', svg:'<path d="M4 4l7 9M4 20l7-9M20 4l-7 9M20 20l-7-9" stroke="#000" stroke-width="2" stroke-linecap="round"/>', status:'available', fields:['API Key','API Secret','Access Token','Account ID'] },
+      { name:'YouTube Ads', svg:'<rect x="2" y="6" width="20" height="12" rx="3" fill="none" stroke="#ff0000" stroke-width="1.5"/><path d="M10 9l5 3-5 3V9z" fill="#ff0000"/>', status:'available', fields:['Channel ID','OAuth Client ID','Client Secret'] },
+      { name:'DV360', svg:'<circle cx="12" cy="12" r="9" fill="none" stroke="#4285f4" stroke-width="1.5"/><path d="M12 3v18M3 12h18" stroke="#4285f4" stroke-width="1" opacity=".4"/><circle cx="12" cy="12" r="4" fill="#4285f4" opacity=".2"/><circle cx="12" cy="12" r="1.5" fill="#4285f4"/>', status:'available', fields:['Partner ID','Advertiser ID','Service Account JSON'] },
+      { name:'The Trade Desk', svg:'<path d="M4 18V8l6-4 6 4 4-2v12H4z" fill="none" stroke="#e1251b" stroke-width="1.5" stroke-linejoin="round"/><path d="M10 18v-6h4v6" stroke="#e1251b" stroke-width="1.5"/>', status:'available', fields:['Partner ID','API Token','Advertiser ID'] }
     ]}
   ];
 
   var SYNC_LOG = [
     { source:'Snowflake', time:'12 min ago', status:'success', rows:'14,230', dur:'8s' },
+    { source:'Google Ads', time:'18 min ago', status:'success', rows:'6,420', dur:'5s' },
+    { source:'Meta Ads', time:'22 min ago', status:'success', rows:'4,180', dur:'4s' },
     { source:'Segment', time:'35 min ago', status:'success', rows:'3,891', dur:'3s' },
+    { source:'LinkedIn Ads', time:'1h ago', status:'warning', rows:'820', dur:'14s' },
     { source:'BigQuery', time:'1h ago', status:'success', rows:'8,412', dur:'12s' },
     { source:'Snowflake', time:'2h ago', status:'success', rows:'14,105', dur:'9s' },
     { source:'Segment', time:'3h ago', status:'warning', rows:'2,100', dur:'18s' },
@@ -11040,6 +11053,69 @@ const ViewConnect = (() => {
     h += '</div></div>';
     // Empty right cell for CDPs row
     h += '<div></div>';
+
+    // ── Row 4: Media Platforms (spans both columns) ──
+    h += '<div style="min-width:0;grid-column:1 / -1">';
+    var cat3 = SOURCES[3];
+    h += '<div class="t-label">' + cat3.cat + '</div>';
+    h += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px">';
+    cat3.items.forEach(function(s) {
+      var isConn = s.status === 'connected';
+      var isExp = _expanded === s.name;
+      h += '<div>';
+      h += '<div class="hv-lift" onclick="' + (isConn ? 'ViewConnect.toggle(\'' + s.name + '\')' : 'ViewConnect.startConnect(\'' + s.name + '\')') + '" style="display:flex;align-items:center;gap:14px;padding:14px 18px;background:var(--card);border-radius:' + (isExp?'14px 14px 0 0':'14px') + ';box-shadow:0 1px 3px rgba(0,0,0,.04),0 4px 12px rgba(0,0,0,.03);cursor:pointer;transition:box-shadow var(--dur-fast)">';
+      h += '<svg viewBox="0 0 24 24" width="22" height="22" class="fs0">' + s.svg + '</svg>';
+      h += '<div class="f1m"><div class="t-heading">' + s.name + '</div>';
+      if (isConn) h += '<div style="font-size:11px;color:var(--t4);margin-top:1px">Synced ' + s.lastSync + '</div>';
+      else h += '<div style="font-size:11px;color:var(--t4);margin-top:1px">Not configured</div>';
+      h += '</div>';
+      if (isConn) {
+        var hCol3 = s.health === 'green' ? 'var(--green-d)' : s.health === 'amber' ? 'var(--amber-d)' : '#ff3b30';
+        h += '<div style="width:8px;height:8px;border-radius:50%;background:' + hCol3 + ';flex-shrink:0"></div>';
+        h += '<svg viewBox="0 0 24 24" fill="none" stroke="var(--t4)" stroke-width="1.5" width="14" height="14" style="flex-shrink:0;transform:rotate(' + (isExp?'90':'0') + 'deg);transition:transform var(--dur-fast)"><polyline points="9 18 15 12 9 6"/></svg>';
+      } else {
+        h += '<span style="font-size:10px;font-weight:600;padding:4px 12px;border-radius:8px;background:var(--chrome);color:var(--btn-pri-text,#fff);transition:opacity var(--dur-fast)">Connect</span>';
+      }
+      h += '</div>';
+      // Expanded detail for connected media sources
+      if (isExp && isConn) {
+        h += '<div style="background:var(--card);border-top:1px solid var(--border-s);border-radius:0 0 14px 14px;padding:18px 20px;box-shadow:0 4px 12px rgba(0,0,0,.03);min-width:0;overflow:hidden">';
+        if (s.keyExpires && s.keyExpires <= 14) {
+          h += '<div style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:rgba(255,159,10,.06);border:1px solid rgba(255,159,10,.15);border-radius:10px;margin-bottom:14px;font-size:11px;color:var(--amber-d)">';
+          h += '<span style="flex:1;font-weight:500">API key expires in ' + s.keyExpires + ' days</span>';
+          h += '<button onclick="Toast.show(\'Key rotation initiated\',\'success\');event.stopPropagation()" style="padding:4px 12px;border-radius:6px;border:1px solid var(--amber-d);background:transparent;font-family:var(--f);font-size:10px;font-weight:600;color:var(--amber-d);cursor:pointer">Rotate</button>';
+          h += '</div>';
+        }
+        h += '<div style="display:flex;gap:8px;margin-bottom:14px">';
+        h += '<div style="flex:1;padding:10px 12px;background:var(--bg-deep);border-radius:10px"><div class="t-title16">' + (s.tables?s.tables.length:0) + '</div><div class="t-meta mt2">Tables</div></div>';
+        h += '<div style="flex:1;padding:10px 12px;background:var(--bg-deep);border-radius:10px"><div class="t-title16">' + s.rows + '</div><div class="t-meta mt2">Rows</div></div>';
+        h += '<div style="flex:1;padding:10px 12px;background:var(--bg-deep);border-radius:10px"><div style="font-size:16px;font-weight:700;color:var(--green-d)">' + s.lastSync + '</div><div class="t-meta mt2">Last sync</div></div>';
+        h += '</div>';
+        if (s.tables) { s.tables.forEach(function(t,ti){ h+='<div style="display:flex;align-items:center;gap:8px;padding:7px 12px;background:'+(ti%2===0?'var(--bg-deep)':'transparent')+';border-radius:6px"><svg viewBox="0 0 24 24" fill="none" stroke="var(--t4)" stroke-width="1.5" width="12" height="12" class="fs0"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="3" x2="9" y2="21"/></svg><span style="flex:1;font-size:11px;font-family:\'SF Mono\',Menlo,monospace;color:var(--t2)">'+t.n+'</span><span style="font-size:10px;color:var(--t4);font-weight:500">'+t.r+' rows</span></div>'; }); }
+        h += '<div style="display:flex;gap:8px;margin-top:14px">';
+        h += '<button onclick="Toast.show(\'' + s.name + ' sync started\',\'success\');event.stopPropagation()" style="padding:7px 16px;border-radius:10px;border:none;background:var(--chrome);color:var(--btn-pri-text,#fff);font-family:var(--f);font-size:11px;font-weight:600;cursor:pointer">Sync Now</button>';
+        h += '<button onclick="Toast.show(\'Settings opened\',\'default\');event.stopPropagation()" style="padding:7px 16px;border-radius:10px;border:1px solid var(--border-s);background:transparent;font-family:var(--f);font-size:11px;font-weight:500;color:var(--t2);cursor:pointer">Settings</button>';
+        h += '</div></div>';
+      }
+      // Connection test flow for unconnected media sources
+      if (isExp && !isConn && _connecting === s.name) {
+        h += '<div id="conn-form-panel" style="background:var(--card);border-top:1px solid var(--border-s);border-radius:0 0 14px 14px;padding:20px;box-shadow:0 4px 12px rgba(0,0,0,.03)">';
+        if (_connStep === 0) {
+          h += '<div class="t-sec-head">Configure ' + s.name + '</div>';
+          (s.fields || ['Host','API Key']).forEach(function(f) { var isSecret=f.toLowerCase().indexOf('password')>=0||f.toLowerCase().indexOf('secret')>=0||f.toLowerCase().indexOf('token')>=0||f.toLowerCase().indexOf('key')>=0; h+='<div class="mb10"><label style="font-size:11px;font-weight:500;color:var(--t3);display:block;margin-bottom:4px">'+f+'</label><input type="'+(isSecret?'password':'text')+'" placeholder="'+(isSecret?'\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022':f)+'" style="width:100%;padding:8px 12px;border:1px solid var(--border-s);border-radius:10px;background:var(--bg-deep);font-family:var(--f);font-size:12px;color:var(--text);outline:none;box-sizing:border-box"></div>'; });
+          h += '<div style="display:flex;gap:8px;margin-top:14px"><button onclick="ViewConnect.testConnection();event.stopPropagation()" style="padding:8px 20px;border-radius:10px;border:none;background:var(--chrome);color:var(--btn-pri-text,#fff);font-family:var(--f);font-size:12px;font-weight:600;cursor:pointer">Test Connection</button><button onclick="ViewConnect.toggle(null);event.stopPropagation()" style="padding:8px 20px;border-radius:10px;border:1px solid var(--border-s);background:transparent;font-family:var(--f);font-size:12px;font-weight:500;color:var(--t3);cursor:pointer">Cancel</button></div>';
+        } else if (_connStep === 1) {
+          h += '<div style="text-align:center;padding:24px 0"><div style="width:32px;height:32px;border:2.5px solid var(--border-s);border-top-color:var(--chrome);border-radius:50%;margin:0 auto 12px;animation:v2spin var(--dur-dramatic) linear infinite"></div><div class="t-heading">Testing connection\u2026</div></div>';
+        } else if (_connStep === 2) {
+          h += '<div style="text-align:center;padding:20px 0"><div style="width:36px;height:36px;border-radius:50%;background:rgba(52,199,89,.1);display:flex;align-items:center;justify-content:center;margin:0 auto 12px"><svg viewBox="0 0 24 24" fill="none" stroke="var(--green-d)" stroke-width="2.5" width="18" height="18"><polyline points="20 6 9 17 4 12"/></svg></div><div style="font-size:13px;font-weight:600;color:var(--green-d)">Connection successful</div><button onclick="ViewConnect.saveConnection();event.stopPropagation()" style="margin-top:16px;padding:8px 24px;border-radius:10px;border:none;background:var(--chrome);color:var(--btn-pri-text,#fff);font-family:var(--f);font-size:12px;font-weight:600;cursor:pointer">Save Connection</button></div>';
+        } else {
+          h += '<div style="text-align:center;padding:20px 0"><div style="font-size:13px;font-weight:600;color:#ff3b30">Connection failed</div><button onclick="ViewConnect.startConnect(\'' + s.name + '\');event.stopPropagation()" style="margin-top:12px;padding:8px 20px;border-radius:10px;border:1px solid var(--border-s);background:transparent;font-family:var(--f);font-size:12px;font-weight:500;color:var(--t2);cursor:pointer">Try Again</button></div>';
+        }
+        h += '</div>';
+      }
+      h += '</div>';
+    });
+    h += '</div></div>';
 
     h += '</div>'; // end grid
 
@@ -11830,7 +11906,7 @@ const ViewAnalysis = (() => {
     h += '<div class="v2-reveal" style="background:var(--card);border-radius:16px;box-shadow:0 1px 3px rgba(0,0,0,.04),0 4px 12px rgba(0,0,0,.03);padding:32px;text-align:center">';
     // Big number
     h += '<div class="t-desc">Combined Annual Impact</div>';
-    h += '<div id="cmp-wif-val" style="font-size:clamp(36px,6vw,52px);font-weight:800;letter-spacing:-.04em;color:var(--text);line-height:1">$' + Math.round(combinedRev).toLocaleString() + '</div>';
+    h += '<div id="cmp-wif-val" style="font-size:clamp(36px,6vw,52px);font-weight:800;letter-spacing:-.04em;color:var(--text);line-height:1">€' + Math.round(combinedRev).toLocaleString() + '</div>';
     h += '<div id="cmp-wif-desc" style="font-size:13px;color:var(--t3);margin-top:8px">Shipping all significant winners</div>';
     // Scenario toggles
     h += '<div style="display:flex;justify-content:center;gap:6px;margin-top:20px;flex-wrap:wrap">';
@@ -12003,7 +12079,7 @@ const ViewAnalysis = (() => {
       var impacts = [lExp, rExp].map(function(e) {
         var lift = e.result.lift || 0;
         var annualRev = lift * 35 * 52 * 5000;
-        return Utils.esc(e.title) + ': ~$' + Math.round(annualRev).toLocaleString() + '/yr (at $35 rev/conv, 5K weekly visitors)';
+        return Utils.esc(e.title) + ': ~€' + Math.round(annualRev).toLocaleString() + '/yr (at €35 rev/conv, 5K weekly visitors)';
       });
       return '**Estimated annual impact** (rough model):\n\n' + impacts.join('\n') + '\n\nThese are directional - plug in your actual traffic and revenue-per-conversion for precise numbers.';
     }
@@ -12089,9 +12165,9 @@ const ViewAnalysis = (() => {
     var lShip = lExp.result.decision === 'ship', rShip = rExp.result.decision === 'ship';
     var combined = (lShip ? lRev : 0) + (rShip ? rRev : 0);
     var h2 = '';
-    h2 += '<div style="padding:16px;background:#e0886808;border-radius:10px;text-align:center"><div style="font-size:10px;font-weight:600;color:var(--t4);text-transform:uppercase;letter-spacing:.3px;margin-bottom:6px">' + Utils.esc(lExp.title.substring(0, 20)) + '</div><div style="font-size:22px;font-weight:800;color:' + (lShip ? '#e08868' : 'var(--t3)') + '">$' + Math.round(Math.abs(lRev)).toLocaleString() + '</div><div class="t-meta mt2">' + (lShip ? 'per year' : 'not shipped') + '</div></div>';
-    h2 += '<div style="padding:16px;background:#5ba8d408;border-radius:10px;text-align:center"><div style="font-size:10px;font-weight:600;color:var(--t4);text-transform:uppercase;letter-spacing:.3px;margin-bottom:6px">' + Utils.esc(rExp.title.substring(0, 20)) + '</div><div style="font-size:22px;font-weight:800;color:' + (rShip ? '#5ba8d4' : 'var(--t3)') + '">$' + Math.round(Math.abs(rRev)).toLocaleString() + '</div><div class="t-meta mt2">' + (rShip ? 'per year' : 'not shipped') + '</div></div>';
-    h2 += '<div style="padding:16px;background:var(--bg-deep);border-radius:10px;text-align:center"><div style="font-size:10px;font-weight:600;color:var(--t4);text-transform:uppercase;letter-spacing:.3px;margin-bottom:6px">Combined</div><div style="font-size:22px;font-weight:800;color:var(--text)">$' + Math.round(combined).toLocaleString() + '</div><div class="t-meta mt2">per year</div></div>';
+    h2 += '<div style="padding:16px;background:#e0886808;border-radius:10px;text-align:center"><div style="font-size:10px;font-weight:600;color:var(--t4);text-transform:uppercase;letter-spacing:.3px;margin-bottom:6px">' + Utils.esc(lExp.title.substring(0, 20)) + '</div><div style="font-size:22px;font-weight:800;color:' + (lShip ? '#e08868' : 'var(--t3)') + '">€' + Math.round(Math.abs(lRev)).toLocaleString() + '</div><div class="t-meta mt2">' + (lShip ? 'per year' : 'not shipped') + '</div></div>';
+    h2 += '<div style="padding:16px;background:#5ba8d408;border-radius:10px;text-align:center"><div style="font-size:10px;font-weight:600;color:var(--t4);text-transform:uppercase;letter-spacing:.3px;margin-bottom:6px">' + Utils.esc(rExp.title.substring(0, 20)) + '</div><div style="font-size:22px;font-weight:800;color:' + (rShip ? '#5ba8d4' : 'var(--t3)') + '">€' + Math.round(Math.abs(rRev)).toLocaleString() + '</div><div class="t-meta mt2">' + (rShip ? 'per year' : 'not shipped') + '</div></div>';
+    h2 += '<div style="padding:16px;background:var(--bg-deep);border-radius:10px;text-align:center"><div style="font-size:10px;font-weight:600;color:var(--t4);text-transform:uppercase;letter-spacing:.3px;margin-bottom:6px">Combined</div><div style="font-size:22px;font-weight:800;color:var(--text)">€' + Math.round(combined).toLocaleString() + '</div><div class="t-meta mt2">per year</div></div>';
     return h2;
   }
 
@@ -12107,7 +12183,7 @@ const ViewAnalysis = (() => {
     var rRev = (rExp.result.lift || 0) * rpc * traffic * 52;
     var combined = (lExp.result.decision === 'ship' ? lRev : 0) + (rExp.result.decision === 'ship' ? rRev : 0);
     var wifVal = document.getElementById('cmp-wif-val');
-    if (wifVal) { wifVal.textContent = '$' + Math.round(combined).toLocaleString(); wifVal.style.color = combined > 0 ? 'var(--text)' : 'var(--t3)'; }
+    if (wifVal) { wifVal.textContent = '€' + Math.round(combined).toLocaleString(); wifVal.style.color = combined > 0 ? 'var(--text)' : 'var(--t3)'; }
   }
 
   function _drawLiftOverlay(lExp, rExp, lLo, lHi, rLo, rHi) {
@@ -12221,7 +12297,7 @@ const ViewAnalysis = (() => {
     var valColor = val > 0 ? 'var(--text)' : val < 0 ? '#ff3b30' : 'var(--t3)';
     if (mode === 'left') valColor = '#e08868';
     if (mode === 'right') valColor = '#5ba8d4';
-    if (valEl) { valEl.textContent = (val < 0 ? '-' : '') + '$' + Math.round(Math.abs(val)).toLocaleString(); valEl.style.color = valColor; }
+    if (valEl) { valEl.textContent = (val < 0 ? '-' : '') + '€' + Math.round(Math.abs(val)).toLocaleString(); valEl.style.color = valColor; }
     if (descEl) descEl.textContent = desc;
   }
 
@@ -12884,9 +12960,9 @@ const ViewAnalysis = (() => {
     html += (function(){
       var w=rec.variant||Object.keys(r.comps)[0]||'';var co=r.comps[w]||{};var tot=r.val.tot||0;var dur=r.meta.dur||30;var ctrl3=(r.vars.Control||Object.values(r.vars)[0]||{rate:0});var wklyVisits=Math.round(tot/(dur/7));var lift=co.ad||0;var liftLo=co.dl||0;
       var h2='<div class="v2-detail-grid-3" style="margin-bottom:20px"><div class="v2-detail-card"><div class="v2-detail-card-label">Weekly Traffic</div><div class="v2-detail-card-val" style="font-size:20px;font-weight:800">'+wklyVisits.toLocaleString()+'</div></div><div class="v2-detail-card"><div class="v2-detail-card-label">Absolute Lift</div><div class="v2-detail-card-val" style="font-size:20px;font-weight:800">'+(lift>=0?'+':'')+(lift*100).toFixed(3)+'pp</div></div><div class="v2-detail-card"><div class="v2-detail-card-label">Control Rate</div><div class="v2-detail-card-val" style="font-size:20px;font-weight:800">'+(ctrl3.rate*100).toFixed(2)+'%</div></div></div>';
-      h2+='<div style="padding:16px;background:var(--bg-deep);border-radius:14px;margin-bottom:16px"><div style="font-size:11px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--t4);margin-bottom:12px">Assumptions</div><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px"><div class="v2-field"><label class="v2-field-label">Revenue per Conversion ($)</label><input class="v2-input" id="v2BizRpc" type="number" value="35" oninput="ViewAnalysis._bizRecalc()"></div><div class="v2-field"><label class="v2-field-label">Weekly Eligible Traffic</label><input class="v2-input" id="v2BizTraffic" type="number" value="'+wklyVisits+'" oninput="ViewAnalysis._bizRecalc()"></div></div></div>';
+      h2+='<div style="padding:16px;background:var(--bg-deep);border-radius:14px;margin-bottom:16px"><div style="font-size:11px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--t4);margin-bottom:12px">Assumptions</div><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px"><div class="v2-field"><label class="v2-field-label">Revenue per Conversion (€)</label><input class="v2-input" id="v2BizRpc" type="number" value="35" oninput="ViewAnalysis._bizRecalc()"></div><div class="v2-field"><label class="v2-field-label">Weekly Eligible Traffic</label><input class="v2-input" id="v2BizTraffic" type="number" value="'+wklyVisits+'" oninput="ViewAnalysis._bizRecalc()"></div></div></div>';
       var rpc=35;var incWkly=Math.round(wklyVisits*lift);var incAnn=incWkly*52;var revAnn=(incAnn*rpc/1e6).toFixed(2);var revConserv=(Math.round(wklyVisits*liftLo)*52*rpc/1e6).toFixed(2);
-      h2+='<div id="v2BizOutput"><div class="v2-stat-grid-4"><div class="v2-stat-card"><div class="v2-stat-val" id="v2BizIncWk" style="font-size:22px">'+incWkly.toLocaleString()+'</div><div class="v2-stat-label">Inc. Conv / Week</div></div><div class="v2-stat-card"><div class="v2-stat-val" id="v2BizIncAnn" style="font-size:22px">'+incAnn.toLocaleString()+'</div><div class="v2-stat-label">Inc. Conv / Year</div></div><div class="v2-stat-card"><div class="v2-stat-val" id="v2BizRev" style="font-size:22px;color:var(--green-d)">$'+revAnn+'M</div><div class="v2-stat-label">Annual Revenue</div></div><div class="v2-stat-card"><div class="v2-stat-val" id="v2BizRevCons" style="font-size:22px;color:var(--t2)">$'+revConserv+'M</div><div class="v2-stat-label">Conservative (CI Low)</div></div></div></div>';
+      h2+='<div id="v2BizOutput"><div class="v2-stat-grid-4"><div class="v2-stat-card"><div class="v2-stat-val" id="v2BizIncWk" style="font-size:22px">'+incWkly.toLocaleString()+'</div><div class="v2-stat-label">Inc. Conv / Week</div></div><div class="v2-stat-card"><div class="v2-stat-val" id="v2BizIncAnn" style="font-size:22px">'+incAnn.toLocaleString()+'</div><div class="v2-stat-label">Inc. Conv / Year</div></div><div class="v2-stat-card"><div class="v2-stat-val" id="v2BizRev" style="font-size:22px;color:var(--green-d)">€'+revAnn+'M</div><div class="v2-stat-label">Annual Revenue</div></div><div class="v2-stat-card"><div class="v2-stat-val" id="v2BizRevCons" style="font-size:22px;color:var(--t2)">€'+revConserv+'M</div><div class="v2-stat-label">Conservative (CI Low)</div></div></div></div>';
       return h2;
     })();
 
@@ -12993,7 +13069,7 @@ const ViewAnalysis = (() => {
       h4+='<div class="v2-field"><label class="v2-field-label">Baseline (%)</label><input class="v2-input" type="number" step="0.1" id="v2AnOppBase" value="'+baseRate2+'"></div>';
       h4+='<div class="v2-field"><label class="v2-field-label">Expected Lift (%)</label><input class="v2-input" type="number" step="1" id="v2AnOppLift" value="'+obsLift+'"></div>';
       h4+='<div class="v2-field"><label class="v2-field-label">Weekly Visits</label><input class="v2-input" type="number" step="1000" id="v2AnOppTraffic" value="'+wklyVisits+'"></div>';
-      h4+='<div class="v2-field"><label class="v2-field-label">Rev / Conv ($)</label><input class="v2-input" type="number" step="1" id="v2AnOppRev" value="35"></div>';
+      h4+='<div class="v2-field"><label class="v2-field-label">Rev / Conv (€)</label><input class="v2-input" type="number" step="1" id="v2AnOppRev" value="35"></div>';
       h4+='<div class="v2-field"><label class="v2-field-label">Margin (%)</label><input class="v2-input" type="number" step="5" id="v2AnOppMargin" value="100"></div></div>';
       h4+='<button class="v2-btn-primary mb16" onclick="ViewAnalysis._calcOpp()" >Calculate</button>';
       h4+='<div id="v2AnOppResult"></div>';
@@ -13065,8 +13141,8 @@ const ViewAnalysis = (() => {
     var el;
     el = document.getElementById('v2BizIncWk'); if (el) el.textContent = incWk.toLocaleString();
     el = document.getElementById('v2BizIncAnn'); if (el) el.textContent = incAnn.toLocaleString();
-    el = document.getElementById('v2BizRev'); if (el) el.textContent = '$' + rev + 'M';
-    el = document.getElementById('v2BizRevCons'); if (el) el.textContent = '$' + revCons + 'M';
+    el = document.getElementById('v2BizRev'); if (el) el.textContent = '€' + rev + 'M';
+    el = document.getElementById('v2BizRevCons'); if (el) el.textContent = '€' + revCons + 'M';
   }
 
   function saveToLibrary() {
@@ -13145,8 +13221,8 @@ const ViewAnalysis = (() => {
     var newRate = ((base + base * lift) * 100).toFixed(2);
     var el = document.getElementById('v2AnOppResult');
     if (el) el.innerHTML = '<div class="v2-stat-grid-4" style="margin-bottom:8px">' +
-      '<div class="v2-stat-card"><div class="v2-stat-val t-big" >$' + Math.round(weekly).toLocaleString() + '</div><div class="v2-stat-label">Weekly</div></div>' +
-      '<div class="v2-stat-card"><div class="v2-stat-val" style="font-size:20px;color:var(--green-d)">$' + Math.round(annual).toLocaleString() + '</div><div class="v2-stat-label">Annual</div></div>' +
+      '<div class="v2-stat-card"><div class="v2-stat-val t-big" >€' + Math.round(weekly).toLocaleString() + '</div><div class="v2-stat-label">Weekly</div></div>' +
+      '<div class="v2-stat-card"><div class="v2-stat-val" style="font-size:20px;color:var(--green-d)">€' + Math.round(annual).toLocaleString() + '</div><div class="v2-stat-label">Annual</div></div>' +
       '<div class="v2-stat-card"><div class="v2-stat-val t-big" >+' + incrConv.toLocaleString() + '</div><div class="v2-stat-label">Conv/wk</div></div>' +
       '<div class="v2-stat-card"><div class="v2-stat-val" style="font-size:18px">' + (base*100).toFixed(1) + '% → ' + newRate + '%</div><div class="v2-stat-label">Rate</div></div></div>';
   }
@@ -13652,9 +13728,9 @@ const ViewOpportunity = (() => {
   function _refresh() {
     var r = _calc();
     var ids = {
-      'opp-weekly': '$' + Math.round(r.weekly).toLocaleString(),
-      'opp-monthly': '$' + Math.round(r.monthly).toLocaleString(),
-      'opp-annual': '$' + Math.round(r.annual).toLocaleString(),
+      'opp-weekly': '€' + Math.round(r.weekly).toLocaleString(),
+      'opp-monthly': '€' + Math.round(r.monthly).toLocaleString(),
+      'opp-annual': '€' + Math.round(r.annual).toLocaleString(),
       'opp-incr-conv': '+' + r.incrConv.toLocaleString() + ' / wk',
       'opp-base-val': _base.toFixed(1) + '%',
       'opp-lift-val': _lift + '%',
@@ -13717,9 +13793,9 @@ const ViewOpportunity = (() => {
 
       <!-- Impact Hero -->
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:24px">
-        <div class="v2-stat-card"><div class="v2-stat-val" id="opp-weekly" style="color:var(--text);font-size:22px">$${Math.round(r.weekly).toLocaleString()}</div><div class="v2-stat-label">Weekly Impact</div></div>
-        <div class="v2-stat-card"><div class="v2-stat-val" id="opp-monthly" style="color:var(--text);font-size:22px">$${Math.round(r.monthly).toLocaleString()}</div><div class="v2-stat-label">Monthly Impact</div></div>
-        <div class="v2-stat-card"><div class="v2-stat-val" id="opp-annual" style="color:var(--green-d);font-size:22px">$${Math.round(r.annual).toLocaleString()}</div><div class="v2-stat-label">Annual Impact</div></div>
+        <div class="v2-stat-card"><div class="v2-stat-val" id="opp-weekly" style="color:var(--text);font-size:22px">€${Math.round(r.weekly).toLocaleString()}</div><div class="v2-stat-label">Weekly Impact</div></div>
+        <div class="v2-stat-card"><div class="v2-stat-val" id="opp-monthly" style="color:var(--text);font-size:22px">€${Math.round(r.monthly).toLocaleString()}</div><div class="v2-stat-label">Monthly Impact</div></div>
+        <div class="v2-stat-card"><div class="v2-stat-val" id="opp-annual" style="color:var(--green-d);font-size:22px">€${Math.round(r.annual).toLocaleString()}</div><div class="v2-stat-label">Annual Impact</div></div>
         <div class="v2-stat-card"><div class="v2-stat-val" id="opp-incr-conv" style="color:var(--green-d);font-size:22px">+${r.incrConv.toLocaleString()} / wk</div><div class="v2-stat-label">Incremental Conv.</div></div>
       </div>
 
@@ -13748,7 +13824,7 @@ const ViewOpportunity = (() => {
             <input class="v2-input" type="number" step="1000" value="${_traffic}" oninput="ViewOpportunity.set('traffic',parseInt(this.value)||0)">
           </div>
           <div class="v2-field">
-            <label class="v2-field-label">Revenue per Conversion ($)</label>
+            <label class="v2-field-label">Revenue per Conversion (€)</label>
             <input class="v2-input" type="number" step="1" value="${_rev}" oninput="ViewOpportunity.set('rev',parseFloat(this.value)||0)">
           </div>
           <div class="v2-field" style="margin-bottom:0">
@@ -13887,7 +13963,7 @@ const ViewHype = (() => {
     var incAnn = incWk * 52;
     var revAnn = (incAnn * 35 / 1e6).toFixed(2);
     if (dec === 'ship' && incAnn > 0) {
-      msg += 'Worth roughly **$' + revAnn + 'M annually** at $35/conversion. That\'s ~' + _n(incAnn) + ' incremental conversions per year.\n\n';
+      msg += 'Worth roughly **€' + revAnn + 'M annually** at €35/conversion. That\'s ~' + _n(incAnn) + ' incremental conversions per year.\n\n';
     }
 
     // Guardrails
@@ -14004,7 +14080,7 @@ const ViewHype = (() => {
           var resp = '**The Predictor scores ' + targetExp.title + ' at ' + pred.probability + '%** probability of success.\n\n';
           resp += '\u2022 **Predicted lift:** +' + pred.predictedLiftPct + '%\n';
           resp += '\u2022 **Predicted runtime:** ' + pred.predictedRuntime + ' days\n';
-          if (pred.predictedRev > 0) resp += '\u2022 **Projected revenue:** $' + Math.round(pred.predictedRev / 1000) + 'K/yr\n';
+          if (pred.predictedRev > 0) resp += '\u2022 **Projected revenue:** €' + Math.round(pred.predictedRev / 1000) + 'K/yr\n';
           resp += '\u2022 **Based on:** ' + pred.dataPoints + ' similar experiments (' + pred.confidence + ' confidence)\n\n';
           resp += pred.recommendation;
           if (pred.winnerTraits.length > 0) {
@@ -14068,11 +14144,11 @@ const ViewHype = (() => {
             resp += sg.hypothesis + '\n';
             resp += '_' + sg.graphProbability + '% Probability';
             if (sg.predictedLift !== '?') resp += ' · +' + sg.predictedLift + '% predicted lift';
-            if (sg.predictedRev > 0) resp += ' · $' + Math.round(sg.predictedRev / 1000) + 'K/yr projected';
+            if (sg.predictedRev > 0) resp += ' · €' + Math.round(sg.predictedRev / 1000) + 'K/yr projected';
             resp += '_\n\n';
           });
           var totalRev = suggestions.reduce(function(s,g){return s+(g.predictedRev||0);},0);
-          if (totalRev > 0) resp += '**Combined projected impact: $' + Math.round(totalRev / 1000) + 'K/yr.** Navigate to New to start designing.';
+          if (totalRev > 0) resp += '**Combined projected impact: €' + Math.round(totalRev / 1000) + 'K/yr.** Navigate to New to start designing.';
           else resp += 'Navigate to New to start designing any of these.';
           return resp;
         }
@@ -14495,7 +14571,7 @@ const ViewHype = (() => {
         if(e.oppCalc&&e.oppCalc.annual){_sprintRev2+=e.oppCalc.annual}
         else{var rp=e.primary_metric==='checkout_conversion_rate'?85:e.primary_metric==='email_open_rate'?2.50:35;var br=e.primary_metric==='checkout_conversion_rate'?0.048:e.primary_metric==='email_open_rate'?0.22:0.05;_sprintRev2+=Math.round(10000*br*lift)*rp*52}
       });
-      var _revNote = _sprintRev2 > 0 ? ' Estimated revenue impact of shippable experiments: $' + Math.round(_sprintRev2).toLocaleString() + '/yr.' : '';
+      var _revNote = _sprintRev2 > 0 ? ' Estimated revenue impact of shippable experiments: €' + Math.round(_sprintRev2).toLocaleString() + '/yr.' : '';
 
       // Summary line
       rpt += '<div style="font-size:14.5px;color:var(--t2);line-height:1.7;margin-bottom:16px"><strong class="c-text">Sprint complete.</strong> ' + shipCount + ' ship, ' + holdCount + ' hold, ' + contCount + ' continue. Program win rate: ' + wr + '%.' + _revNote + '</div>';
@@ -15073,7 +15149,7 @@ const HypeV2 = (() => {
         resp += emoji + ' **' + e.title + '**\n';
         resp += '   Day ' + days + ' · ' + (e.primary_metric||'-').replace(/_/g,' ');
         if (prob) resp += ' · **' + prob + '% P(Win)**';
-        if (pred && pred.predictedRev > 0) resp += ' · $' + Math.round(pred.predictedRev/1000) + 'K projected';
+        if (pred && pred.predictedRev > 0) resp += ' · €' + Math.round(pred.predictedRev/1000) + 'K projected';
         resp += '\n';
         // Alerts
         if (e.alerts && e.alerts.length > 0) {
@@ -15086,7 +15162,7 @@ const HypeV2 = (() => {
         resp += '\n';
       });
       var pipelineRev = running.reduce(function(s,e){var p=Utils.predictSuccess(e,exps);return s+(p&&p.predictedRev>0?p.predictedRev*(p.probability/100):0);},0);
-      if (pipelineRev > 0) resp += '**Pipeline expected value: $' + Math.round(pipelineRev/1000) + 'K/yr** (probability-weighted).';
+      if (pipelineRev > 0) resp += '**Pipeline expected value: €' + Math.round(pipelineRev/1000) + 'K/yr** (probability-weighted).';
       return resp;
     }
     if (has('win rate') || has('win %') || has('how are we')) {
@@ -15104,14 +15180,14 @@ const HypeV2 = (() => {
       resp += (wr>=50?'🟢 **Top quartile.** Industry benchmark is 25–35%. You\'re outperforming by '+(wr-33)+'pp.':wr>=35?'🟡 **Above average.** Industry benchmark is 25–35%. You\'re on the right side.':wr>=25?'🟠 On pace with the 25–35% industry average.':'🔴 Below the 25–35% industry benchmark. Focus on hypothesis quality and bigger bets.')+'\n\n';
       resp += '**By the numbers:**\n';
       resp += '• Avg lift on wins: **+' + avgLift + '%**\n';
-      resp += '• Revenue from shipped wins: **$' + Math.round(totalRev).toLocaleString() + '/yr** ($' + Math.round(totalRev/52).toLocaleString() + '/week)\n';
+      resp += '• Revenue from shipped wins: **€' + Math.round(totalRev).toLocaleString() + '/yr** (€' + Math.round(totalRev/52).toLocaleString() + '/week)\n';
       resp += '• Held/stopped: ' + holds.length + ' experiment' + (holds.length!==1?'s':'') + '\n\n';
       if (platLines.length > 1) {
         resp += '**Win rate by platform:**\n' + platLines.join('\n') + '\n\n';
         if (bestPlat) resp += '→ **' + bestPlat + '** is your strongest surface. Double down there.\n\n';
       }
       resp += '**Recent wins:**\n';
-      resp += wins.slice(0,3).map(function(e){return '• **'+e.title+'** - +'+Math.round((e.result.lift||0)*100)+'% lift' + (Utils.calcExpRevenue(e)>0?' · $'+Math.round(Utils.calcExpRevenue(e)/1000)+'K/yr':'');}).join('\n');
+      resp += wins.slice(0,3).map(function(e){return '• **'+e.title+'** - +'+Math.round((e.result.lift||0)*100)+'% lift' + (Utils.calcExpRevenue(e)>0?' · €'+Math.round(Utils.calcExpRevenue(e)/1000)+'K/yr':'');}).join('\n');
       if (holds.length > 0) {
         resp += '\n\n**Key learnings from holds:**\n';
         resp += holds.slice(0,2).map(function(e){return '• **'+e.title+'** - '+(e.learningCard?e.learningCard.insight.slice(0,100)+'…':'No significant effect detected.');}).join('\n');
@@ -15145,11 +15221,11 @@ const HypeV2 = (() => {
       var held = done.filter(function(e){return e.result.decision!=='ship';});
       var totalRev = shipped.reduce(function(s,e){return s+Utils.calcExpRevenue(e);},0);
       var resp = '**' + shipped.length + '/' + done.length + ' experiments shipped** (' + wr + '% win rate)\n\n';
-      resp += '💰 Total revenue impact: **$' + Math.round(totalRev).toLocaleString() + '/yr**\n\n';
+      resp += '💰 Total revenue impact: **€' + Math.round(totalRev).toLocaleString() + '/yr**\n\n';
       resp += '**Shipped wins:**\n';
       resp += shipped.map(function(e){
         var rev = Utils.calcExpRevenue(e);
-        return '✓ **' + e.title + '** - +' + Math.round((e.result.lift||0)*100) + '% lift' + (rev>0?' · $'+Math.round(rev/1000)+'K/yr':'');
+        return '✓ **' + e.title + '** - +' + Math.round((e.result.lift||0)*100) + '% lift' + (rev>0?' · €'+Math.round(rev/1000)+'K/yr':'');
       }).join('\n');
       if (held.length > 0) {
         resp += '\n\n**Held/stopped:**\n';
@@ -15190,7 +15266,7 @@ const HypeV2 = (() => {
 
       var resp = '**Program snapshot:**\n\n';
       resp += '📊 **' + exps.length + ' experiments** - ' + running.length + ' running · ' + decided.length + ' decided · ' + queued + ' queued\n\n';
-      resp += '💰 **$' + Math.round(totalRev).toLocaleString() + '/yr** attributed revenue from ' + wins.length + ' shipped wins ($' + Math.round(totalRev/52).toLocaleString() + '/week)\n\n';
+      resp += '💰 **€' + Math.round(totalRev).toLocaleString() + '/yr** attributed revenue from ' + wins.length + ' shipped wins (€' + Math.round(totalRev/52).toLocaleString() + '/week)\n\n';
       resp += '📈 **' + wr + '% win rate** · ' + avgLift + '% avg lift · ' + (decided.length > 0 ? Math.round(decided.length / 3) : 0) + ' decisions/month velocity\n\n';
 
       if (running.length > 0) {
@@ -15270,7 +15346,7 @@ const HypeV2 = (() => {
             resp += (si+1) + '. **' + sg.title + '**\n';
             resp += '   ' + sg.hypothesis + '\n';
             resp += '   _' + sg.graphProbability + '% predicted success';
-            if (sg.predictedRev > 0) resp += ' · $' + Math.round(sg.predictedRev / 1000) + 'K/yr projected';
+            if (sg.predictedRev > 0) resp += ' · €' + Math.round(sg.predictedRev / 1000) + 'K/yr projected';
             resp += '_\n\n';
           });
           resp += 'Navigate to **New** to start designing any of these.';
@@ -15282,7 +15358,7 @@ const HypeV2 = (() => {
       candidates.slice(0,3).forEach(function(e,i){
         var pred = Utils.predictSuccess(e, exps);
         var probStr = pred ? pred.probability + '% predicted success' : 'Not enough data to predict';
-        var revStr = pred && pred.predictedRev > 0 ? ' · $' + Math.round(pred.predictedRev / 1000) + 'K/yr projected' : '';
+        var revStr = pred && pred.predictedRev > 0 ? ' · €' + Math.round(pred.predictedRev / 1000) + 'K/yr projected' : '';
         resp += (i+1) + '. **' + e.title + '** (ICE: ' + (e.iceScore||0) + ')\n';
         resp += '   ' + e.hypothesis.slice(0,120) + '…\n';
         resp += '   _' + probStr + revStr + '_\n\n';
@@ -15292,7 +15368,7 @@ const HypeV2 = (() => {
         var pred = Utils.predictSuccess(e, exps);
         return s + (pred && pred.predictedRev > 0 ? pred.predictedRev * (pred.probability / 100) : 0);
       }, 0);
-      if (totalProjRev > 0) resp += '**Combined expected value: $' + Math.round(totalProjRev / 1000) + 'K/yr** (probability-weighted).\n\n';
+      if (totalProjRev > 0) resp += '**Combined expected value: €' + Math.round(totalProjRev / 1000) + 'K/yr** (probability-weighted).\n\n';
       if (running.length < 3) {
         resp += '→ You have **' + (3-running.length) + ' open slot' + (3-running.length>1?'s':'') + '**. Promote from the **Queue** to start running.';
       } else {
@@ -17458,7 +17534,7 @@ const StoryDeck = (() => {
       _textBox(2, _emu(0.8), _emu(1), _emu(11), _emu(0.4), 'EXPERIMENTATION ENGINE', { size: 1000, color: '0A84FF', bold: true }) +
       _textBox(3, _emu(0.8), _emu(2), _emu(11), _emu(1.2), 'Program Health Report', { size: 3600, color: 'FFFFFF', bold: true }) +
       _textBox(4, _emu(0.8), _emu(3.5), _emu(11), _emu(0.4), experiments.length + ' experiments  |  ' + decided.length + ' decided  |  ' + wins.length + ' shipped', { size: 1200, color: '8E8E93' }) +
-      _textBox(5, _emu(0.8), _emu(4.2), _emu(5), _emu(0.5), '$' + Math.round(totalRev).toLocaleString() + ' annualised incremental revenue', { size: 1400, color: '34C759', bold: true })
+      _textBox(5, _emu(0.8), _emu(4.2), _emu(5), _emu(0.5), '€' + Math.round(totalRev).toLocaleString() + ' annualised incremental revenue', { size: 1400, color: '34C759', bold: true })
     ));
 
     // Slide 2: Key metrics
@@ -17470,7 +17546,7 @@ const StoryDeck = (() => {
       _textBox(6, _emu(3.8), _emu(2.2), _emu(2.5), _emu(0.4), 'Avg winning lift (benchmark +5-10%)', { size: 1100, color: '86868B' }) +
       _textBox(7, _emu(6.8), _emu(1.5), _emu(2.5), _emu(0.8), avgCycle + 'd', { size: 4000, color: '1D1D1F', bold: true }) +
       _textBox(8, _emu(6.8), _emu(2.2), _emu(2.5), _emu(0.4), 'Avg cycle time (industry 14-28d)', { size: 1100, color: '86868B' }) +
-      _textBox(9, _emu(0.8), _emu(3.5), _emu(11), _emu(0.4), 'Revenue impact: $' + Math.round(totalRev).toLocaleString() + ' annualised across ' + wins.length + ' shipped experiments', { size: 1200, color: '34C759', bold: true }) +
+      _textBox(9, _emu(0.8), _emu(3.5), _emu(11), _emu(0.4), 'Revenue impact: €' + Math.round(totalRev).toLocaleString() + ' annualised across ' + wins.length + ' shipped experiments', { size: 1200, color: '34C759', bold: true }) +
       _textBox(10, _emu(0.8), _emu(4.2), _emu(11), _emu(0.4), (decided.length * 3) + ' analyst-hours saved through automated analysis. 100% pre-registered, audit-trailed.', { size: 1100, color: '86868B' })
     ));
 
@@ -17530,7 +17606,7 @@ const StoryDeck = (() => {
       _textBox(4, _emu(0.8), _emu(2.3), _emu(3), _emu(0.6), decLabel + '  ' + liftPct, { size: 2800, color: decHex, bold: true }) +
       _textBox(5, _emu(5), _emu(2.3), _emu(3), _emu(0.3), 'p = ' + (r.p_value ? r.p_value.toFixed(4) : 'N/A'), { size: 1200, color: '8E8E93' }) +
       _textBox(6, _emu(5), _emu(2.7), _emu(3), _emu(0.3), exp.primary_metric, { size: 1100, color: '8E8E93' }) +
-      (rev > 0 ? _textBox(7, _emu(0.8), _emu(3.3), _emu(11), _emu(0.4), '$' + Math.round(rev).toLocaleString() + ' estimated annual revenue impact', { size: 1200, color: '34C759', bold: true }) : '') +
+      (rev > 0 ? _textBox(7, _emu(0.8), _emu(3.3), _emu(11), _emu(0.4), '€' + Math.round(rev).toLocaleString() + ' estimated annual revenue impact', { size: 1200, color: '34C759', bold: true }) : '') +
       (exp.learningCard && exp.learningCard.insight ? _textBox(8, _emu(0.8), _emu(4.0), _emu(11), _emu(0.6), exp.learningCard.insight, { size: 1100, color: 'AEAEB2' }) : '') +
       (exp.learningCard && exp.learningCard.next ? _textBox(9, _emu(0.8), _emu(4.7), _emu(11), _emu(0.4), 'Next: ' + exp.learningCard.next, { size: 1000, color: '636366' }) : '')
     ));
@@ -20765,17 +20841,17 @@ const ViewImpact = (() => {
       var rEl = document.getElementById('sim-rev-' + e.id);
       var bEl = document.getElementById('sim-bar-' + e.id);
       if (lEl) { var p = Math.round(lift * 100); lEl.textContent = (p >= 0 ? '+' : '') + p + '%'; lEl.style.color = p > 0 ? '#34c759' : 'var(--t4)'; }
-      if (rEl) rEl.textContent = '$' + Math.round(rev).toLocaleString();
+      if (rEl) rEl.textContent = '€' + Math.round(rev).toLocaleString();
       if (bEl) { var maxRev = _getWins().reduce(function(m,x){var r=_calcRev(x);return r>m?r:m;},1); bEl.style.width = Math.max(3, rev/maxRev*100).toFixed(0) + '%'; }
     });
     var observed = wins.reduce(function(s, e) { return s + _calcRev(e); }, 0);
     var tEl = document.getElementById('sim-total');
     var dEl = document.getElementById('sim-delta');
-    if (tEl) { tEl.textContent = '$' + Math.round(total).toLocaleString(); tEl.style.color = total >= observed ? '#34c759' : 'var(--amber-d)'; }
+    if (tEl) { tEl.textContent = '€' + Math.round(total).toLocaleString(); tEl.style.color = total >= observed ? '#34c759' : 'var(--amber-d)'; }
     if (dEl) {
       var diff = total - observed;
       var pct = observed > 0 ? Math.round(diff / observed * 100) : 0;
-      dEl.textContent = diff === 0 ? 'Observed values' : (diff > 0 ? '+' : '') + '$' + Math.round(diff).toLocaleString() + ' (' + (pct > 0 ? '+' : '') + pct + '%) vs observed';
+      dEl.textContent = diff === 0 ? 'Observed values' : (diff > 0 ? '+' : '') + '€' + Math.round(diff).toLocaleString() + ' (' + (pct > 0 ? '+' : '') + pct + '%) vs observed';
     }
   }
 
@@ -20800,7 +20876,7 @@ const ViewImpact = (() => {
     h += '<button onclick="ViewDashboard.openRevConfig()" style="width:32px;height:32px;border-radius:8px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.08);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background var(--dur-fast)" onmouseenter="this.style.background=\'rgba(255,255,255,.15)\'" onmouseleave="this.style.background=\'rgba(255,255,255,.08)\'"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5" width="16" height="16"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9c.06-.3.06-.6 0-.9"/></svg></button>';
     h += '</div>';
 
-    h += '<div style="font-size:clamp(36px,5vw,52px);font-weight:800;color:#34c759;letter-spacing:-.04em;line-height:1;margin-bottom:6px">$' + Math.round(totalRev).toLocaleString() + '</div>';
+    h += '<div style="font-size:clamp(36px,5vw,52px);font-weight:800;color:#34c759;letter-spacing:-.04em;line-height:1;margin-bottom:6px">€' + Math.round(totalRev).toLocaleString() + '</div>';
     h += '<div style="font-size:13px;color:rgba(255,255,255,.7);margin-bottom:16px">Annualised incremental revenue from <strong style="color:#fff">' + wins.length + ' shipped</strong> experiments</div>';
 
     // HYPE briefing
@@ -20810,9 +20886,9 @@ const ViewImpact = (() => {
     var _topExp = sortedWins[0];
     var _topRev = _topExp ? _calcRev(_topExp) : 0;
     var _topShare = totalRev > 0 ? Math.round(_topRev / totalRev * 100) : 0;
-    h += 'Program delivering <strong style="color:rgba(255,255,255,.85)">$' + Math.round(totalRev).toLocaleString() + '</strong> annually at <strong style="color:rgba(255,255,255,.85)">' + winRate + '% win rate</strong>.';
-    if (_topExp) h += ' Top contributor: <strong style="color:rgba(255,255,255,.85)">' + Utils.esc(_topExp.title) + '</strong> at $' + Math.round(_topRev / 1000) + 'K (' + _topShare + '% of total).';
-    if (pipelineTotal > 0) h += ' Pipeline holds an additional <strong style="color:#0a84ff">$' + Math.round(pipelineTotal / 1000) + 'K</strong> in potential.';
+    h += 'Program delivering <strong style="color:rgba(255,255,255,.85)">€' + Math.round(totalRev).toLocaleString() + '</strong> annually at <strong style="color:rgba(255,255,255,.85)">' + winRate + '% win rate</strong>.';
+    if (_topExp) h += ' Top contributor: <strong style="color:rgba(255,255,255,.85)">' + Utils.esc(_topExp.title) + '</strong> at €' + Math.round(_topRev / 1000) + 'K (' + _topShare + '% of total).';
+    if (pipelineTotal > 0) h += ' Pipeline holds an additional <strong style="color:#0a84ff">€' + Math.round(pipelineTotal / 1000) + 'K</strong> in potential.';
     h += '</div></div>';
 
     // Stacked bar with hoverable segments
@@ -20824,7 +20900,7 @@ const ViewImpact = (() => {
         var col = _greens[i % _greens.length];
         var shortTitle = e.title.length > 28 ? e.title.substring(0,26) + '\u2026' : e.title;
         h += '<div class="imp-bar-seg" onclick="Router.navigate(\'detail\',{id:\'' + e.id + '\'})" style="flex:' + flex + ';background:' + col + ';cursor:pointer;position:relative;height:10px;' + (i === 0 ? 'border-radius:5px 0 0 5px;' : '') + (i === sortedWins.length - 1 ? 'border-radius:0 5px 5px 0;' : '') + '">';
-        h += '<span class="imp-bar-tip">' + Utils.esc(shortTitle) + ' \u00B7 $' + Math.round(rev / 1000) + 'K</span>';
+        h += '<span class="imp-bar-tip">' + Utils.esc(shortTitle) + ' \u00B7 €' + Math.round(rev / 1000) + 'K</span>';
         h += '</div>';
       });
       h += '</div>';
@@ -20833,22 +20909,22 @@ const ViewImpact = (() => {
       h += '<div style="display:flex;gap:14px;flex-wrap:wrap;margin:16px 0 24px">';
       sortedWins.forEach(function(e, i) {
         var rev = _calcRev(e);
-        h += '<span class="imp-legend-item" onclick="Router.navigate(\'detail\',{id:\'' + e.id + '\'})" style="font-size:11px;color:rgba(255,255,255,.65);cursor:pointer"><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:' + _greens[i % _greens.length] + ';margin-right:4px;vertical-align:middle"></span>' + Utils.esc(e.title.length > 22 ? e.title.substring(0,20) + '\u2026' : e.title) + ' <strong style="color:rgba(255,255,255,.85)">$' + Math.round(rev / 1000) + 'K</strong></span>';
+        h += '<span class="imp-legend-item" onclick="Router.navigate(\'detail\',{id:\'' + e.id + '\'})" style="font-size:11px;color:rgba(255,255,255,.65);cursor:pointer"><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:' + _greens[i % _greens.length] + ';margin-right:4px;vertical-align:middle"></span>' + Utils.esc(e.title.length > 22 ? e.title.substring(0,20) + '\u2026' : e.title) + ' <strong style="color:rgba(255,255,255,.85)">€' + Math.round(rev / 1000) + 'K</strong></span>';
       });
       h += '</div>';
     }
 
     // Summary cards with brighter labels
     h += '<div style="display:flex;gap:10px">';
-    h += '<div style="flex:1;padding:14px 16px;background:rgba(255,255,255,.06);border-radius:12px"><div style="font-size:22px;font-weight:800;color:#fff">$' + Math.round(totalRev / 52).toLocaleString() + '</div><div style="font-size:10px;color:rgba(255,255,255,.45);margin-top:2px">Per week</div></div>';
+    h += '<div style="flex:1;padding:14px 16px;background:rgba(255,255,255,.06);border-radius:12px"><div style="font-size:22px;font-weight:800;color:#fff">€' + Math.round(totalRev / 52).toLocaleString() + '</div><div style="font-size:10px;color:rgba(255,255,255,.45);margin-top:2px">Per week</div></div>';
     h += '<div style="flex:1;padding:14px 16px;background:rgba(255,255,255,.06);border-radius:12px"><div style="font-size:22px;font-weight:800;color:#fff">' + winRate + '%</div><div style="font-size:10px;color:rgba(255,255,255,.45);margin-top:2px">Win rate</div></div>';
-    h += '<div style="flex:1;padding:14px 16px;background:rgba(255,255,255,.06);border-radius:12px"><div style="font-size:22px;font-weight:800;color:#0a84ff">$' + Math.round(pipelineTotal / 1000) + 'K</div><div style="font-size:10px;color:rgba(255,255,255,.45);margin-top:2px">Pipeline potential</div></div>';
+    h += '<div style="flex:1;padding:14px 16px;background:rgba(255,255,255,.06);border-radius:12px"><div style="font-size:22px;font-weight:800;color:#0a84ff">€' + Math.round(pipelineTotal / 1000) + 'K</div><div style="font-size:10px;color:rgba(255,255,255,.45);margin-top:2px">Pipeline potential</div></div>';
     h += '</div>';
     h += '</div>';
 
     // REVENUE COMMAND CENTER
     h += '<div id="rev-cmd" style="background:var(--card);border-radius:16px;box-shadow:var(--sh);padding:24px;margin-bottom:16px">';
-    h += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px"><div style="font-size:14px;font-weight:700;color:var(--text)">Revenue attribution</div><div style="font-size:12px;color:var(--t4)">' + sortedWins.length + ' shipped \u00B7 $' + Math.round(totalRev / 1000) + 'K/yr total</div></div>';
+    h += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px"><div style="font-size:14px;font-weight:700;color:var(--text)">Revenue attribution</div><div style="font-size:12px;color:var(--t4)">' + sortedWins.length + ' shipped \u00B7 €' + Math.round(totalRev / 1000) + 'K/yr total</div></div>';
 
     // Interactive donut chart - hover syncs with rows
     h += '<div style="display:flex;gap:20px;align-items:center">';
@@ -20885,7 +20961,7 @@ const ViewImpact = (() => {
       h += '<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + Utils.esc(e.title) + '</div>';
       h += '<div style="font-size:11px;color:var(--t4);margin-top:1px">' + Utils.esc(e.primary_metric) + ' \u00B7 +' + Math.round(lift * 100) + '% lift</div></div>';
       h += '<div style="font-size:12px;font-weight:700;color:' + col + ';min-width:36px;text-align:center;padding:3px 6px;border-radius:6px;background:rgba(52,199,89,.06)">' + share + '%</div>';
-      h += '<div style="text-align:right;flex-shrink:0;min-width:60px"><div style="font-size:15px;font-weight:700;color:var(--green-d)">$' + Math.round(rev / 1000) + 'K</div><div style="font-size:10px;color:var(--t4)">/yr \u00B7 $' + Math.round(rev / 52 / 100) * 100 + '/wk</div></div>';
+      h += '<div style="text-align:right;flex-shrink:0;min-width:60px"><div style="font-size:15px;font-weight:700;color:var(--green-d)">€' + Math.round(rev / 1000) + 'K</div><div style="font-size:10px;color:var(--t4)">/yr \u00B7 €' + Math.round(rev / 52 / 100) * 100 + '/wk</div></div>';
       h += '</div>';
     });
     h += '</div>'; // close table
@@ -20956,22 +21032,22 @@ const ViewImpact = (() => {
     h += '<div style="display:flex;gap:8px;margin-bottom:6px">';
 
     h += '<div id="ci-card-lo" onclick="ViewImpact.setConfidence(\'lo\')" style="flex:1;padding:12px 14px;border-radius:12px;border:1px solid var(--border-s);text-align:center;cursor:pointer;transition:border-color .2s,background .2s">';
-    h += '<div style="font-size:18px;font-weight:800;color:var(--t3);letter-spacing:-.02em">$' + Math.round(loTotal / 1000) + 'K</div>';
+    h += '<div style="font-size:18px;font-weight:800;color:var(--t3);letter-spacing:-.02em">€' + Math.round(loTotal / 1000) + 'K</div>';
     h += '<div style="font-size:10px;color:var(--t4);margin-top:2px">Lower bound</div>';
     h += '</div>';
 
     h += '<div id="ci-card-pt" onclick="ViewImpact.setConfidence(\'pt\')" style="flex:1;padding:12px 14px;border-radius:12px;border:2px solid #34c759;text-align:center;cursor:pointer;background:rgba(52,199,89,.04);transition:border-color .2s,background .2s">';
-    h += '<div style="font-size:18px;font-weight:800;color:#34c759;letter-spacing:-.02em">$' + Math.round(totalRev / 1000) + 'K</div>';
+    h += '<div style="font-size:18px;font-weight:800;color:#34c759;letter-spacing:-.02em">€' + Math.round(totalRev / 1000) + 'K</div>';
     h += '<div style="font-size:10px;color:#34c759;margin-top:2px">Measured</div>';
     h += '</div>';
 
     h += '<div id="ci-card-hi" onclick="ViewImpact.setConfidence(\'hi\')" style="flex:1;padding:12px 14px;border-radius:12px;border:1px solid var(--border-s);text-align:center;cursor:pointer;transition:border-color .2s,background .2s">';
-    h += '<div style="font-size:18px;font-weight:800;color:var(--t3);letter-spacing:-.02em">$' + Math.round(hiTotal / 1000) + 'K</div>';
+    h += '<div style="font-size:18px;font-weight:800;color:var(--t3);letter-spacing:-.02em">€' + Math.round(hiTotal / 1000) + 'K</div>';
     h += '<div style="font-size:10px;color:var(--t4);margin-top:2px">Upper bound</div>';
     h += '</div>';
 
     h += '<div style="flex:1;padding:12px 14px;border-radius:12px;border:2px solid #5856d6;text-align:center;background:rgba(88,86,214,.04)">';
-    h += '<div style="font-size:18px;font-weight:800;color:#5856d6;letter-spacing:-.02em">+$' + Math.round(pipelineTotal / 1000) + 'K</div>';
+    h += '<div style="font-size:18px;font-weight:800;color:#5856d6;letter-spacing:-.02em">+€' + Math.round(pipelineTotal / 1000) + 'K</div>';
     h += '<div style="font-size:10px;color:#5856d6;margin-top:2px">Pipeline</div>';
     h += '</div>';
 
@@ -20985,7 +21061,7 @@ const ViewImpact = (() => {
       var halfWpp = Math.round(c.halfW * 1000) / 10;
       h += '<div onclick="ViewImpact.selectAttrib(' + idx + ')" style="display:flex;align-items:center;gap:12px;padding:10px 0;cursor:pointer;' + (idx < _ciData.length - 1 ? 'border-bottom:.5px solid var(--border-s);' : '') + '">';
       h += '<div style="width:140px;flex-shrink:0"><div style="font-size:12px;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + Utils.esc(c.exp.title) + '</div>';
-      h += '<div style="font-size:10px;color:var(--t4)">$' + Math.round(c.ptRev / 1000) + 'K</div></div>';
+      h += '<div style="font-size:10px;color:var(--t4)">€' + Math.round(c.ptRev / 1000) + 'K</div></div>';
       h += '<div style="flex:1;position:relative;height:24px;min-width:120px">';
       h += '<div style="position:absolute;top:11px;left:' + c.trackL + '%;right:' + (100 - c.trackR) + '%;height:2px;background:var(--border-s)"></div>';
       h += '<div style="position:absolute;top:11px;left:' + c.bandL + '%;right:' + (100 - c.bandR) + '%;height:2px;background:#34c759"></div>';
@@ -21016,7 +21092,7 @@ const ViewImpact = (() => {
         var isFirst = si === 0 || !stageTotals[stages[si-1] && stages[si-1].key];
         var isLast = si === stages.length - 1 || !stageTotals[stages[si+1] && stages[si+1].key];
         h += '<div class="imp-bar-seg" style="flex:' + flex + ';background:' + barColors[s.key] + ';height:10px;position:relative;cursor:pointer;border-radius:' + (isFirst ? '5px' : '2px') + ' ' + (isLast ? '5px' : '2px') + ' ' + (isLast ? '5px' : '2px') + ' ' + (isFirst ? '5px' : '2px') + '">';
-        h += '<span class="imp-bar-tip">' + s.label + ' \u00B7 $' + Math.round(t / 1000) + 'K \u00B7 ' + c + ' exp</span>';
+        h += '<span class="imp-bar-tip">' + s.label + ' \u00B7 €' + Math.round(t / 1000) + 'K \u00B7 ' + c + ' exp</span>';
         h += '</div>';
       });
       h += '</div>';
@@ -21026,7 +21102,7 @@ const ViewImpact = (() => {
       stages.forEach(function(s) {
         var t = stageTotals[s.key] || 0;
         if (t === 0) return;
-        h += '<span style="font-size:11px;color:var(--t3)"><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:' + barColors[s.key] + ';margin-right:4px;vertical-align:middle"></span>' + s.label + ' <strong style="color:var(--text);font-weight:600">$' + Math.round(t / 1000) + 'K</strong></span>';
+        h += '<span style="font-size:11px;color:var(--t3)"><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:' + barColors[s.key] + ';margin-right:4px;vertical-align:middle"></span>' + s.label + ' <strong style="color:var(--text);font-weight:600">€' + Math.round(t / 1000) + 'K</strong></span>';
       });
       h += '</div>';
 
@@ -21045,7 +21121,7 @@ const ViewImpact = (() => {
         h += '<div style="width:6px;height:6px;border-radius:50%;background:' + dotColors[r.stage] + ';flex-shrink:0"></div>';
         h += '<div style="flex:1;min-width:0;font-size:12px;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + Utils.esc(r.p.title) + '</div>';
         h += '<span style="font-size:10px;color:var(--t4);flex-shrink:0">' + r.stage + '</span>';
-        h += '<div style="font-size:12px;font-weight:600;color:' + revColors[r.stage] + ';flex-shrink:0;min-width:45px;text-align:right">$' + Math.round(r.p.rev / 1000) + 'K</div>';
+        h += '<div style="font-size:12px;font-weight:600;color:' + revColors[r.stage] + ';flex-shrink:0;min-width:45px;text-align:right">€' + Math.round(r.p.rev / 1000) + 'K</div>';
         h += '</div>';
       });
 
@@ -21057,7 +21133,7 @@ const ViewImpact = (() => {
       // Pipeline total
       h += '<div style="border-top:.5px solid var(--border-s);margin-top:8px;padding-top:10px;display:flex;justify-content:space-between;align-items:center">';
       h += '<span style="font-size:12px;font-weight:600;color:var(--text)">Pipeline total</span>';
-      h += '<span style="font-size:12px;font-weight:600;color:#5856d6">$' + Math.round(pipelineTotal / 1000) + 'K</span>';
+      h += '<span style="font-size:12px;font-weight:600;color:#5856d6">€' + Math.round(pipelineTotal / 1000) + 'K</span>';
       h += '</div>';
 
       h += '</div>'; // close pipeline section
@@ -21067,11 +21143,11 @@ const ViewImpact = (() => {
     h += '<div style="padding:1px;border-radius:10px;background:linear-gradient(135deg,#e88,#a7f,#7bf);margin-top:14px"><div style="display:flex;gap:8px;align-items:flex-start;padding:10px 12px;background:var(--card);border-radius:9px">';
     h += '<div class="hype-orb" style="width:14px;height:14px;margin-top:2px"></div>';
     h += '<div id="ci-hype" style="font-size:11px;color:var(--t2);line-height:1.5">';
-    h += 'Measured revenue at 95% confidence: <strong style="color:var(--text)">$' + Math.round(loTotal / 1000) + 'K\u2013$' + Math.round(hiTotal / 1000) + 'K</strong>.';
+    h += 'Measured revenue at 95% confidence: <strong style="color:var(--text)">€' + Math.round(loTotal / 1000) + 'K\u2013€' + Math.round(hiTotal / 1000) + 'K</strong>.';
     if (pipelineTotal > 0) {
-      h += ' Pipeline adds <strong style="color:var(--text)">$' + Math.round(pipelineTotal / 1000) + 'K</strong> at 8% assumed lift.';
-      h += ' At ' + winRate + '% win rate, expected pipeline value is <strong style="color:var(--text)">$' + Math.round(expectedPipeVal / 1000) + 'K</strong>.';
-      h += ' Combined program ceiling: <strong style="color:var(--text)">$' + Math.round((hiTotal + pipelineTotal) / 1000) + 'K</strong>.';
+      h += ' Pipeline adds <strong style="color:var(--text)">€' + Math.round(pipelineTotal / 1000) + 'K</strong> at 8% assumed lift.';
+      h += ' At ' + winRate + '% win rate, expected pipeline value is <strong style="color:var(--text)">€' + Math.round(expectedPipeVal / 1000) + 'K</strong>.';
+      h += ' Combined program ceiling: <strong style="color:var(--text)">€' + Math.round((hiTotal + pipelineTotal) / 1000) + 'K</strong>.';
     }
     h += '</div></div></div>';
 
@@ -21114,10 +21190,10 @@ const ViewImpact = (() => {
         var rev = _calcRev(sel);
         var totalRev = wins.reduce(function(s, e) { return s + _calcRev(e); }, 0);
         var share = totalRev > 0 ? Math.round(rev / totalRev * 100) : 0;
-        center.innerHTML = '<div style="font-size:20px;font-weight:800;color:var(--text);letter-spacing:-.03em">$' + Math.round(rev / 1000) + 'K</div><div style="font-size:9px;color:var(--t4)">' + share + '% of total</div>';
+        center.innerHTML = '<div style="font-size:20px;font-weight:800;color:var(--text);letter-spacing:-.03em">€' + Math.round(rev / 1000) + 'K</div><div style="font-size:9px;color:var(--t4)">' + share + '% of total</div>';
       } else {
         var totalRev = wins.reduce(function(s, e) { return s + _calcRev(e); }, 0);
-        center.innerHTML = '<div style="font-size:22px;font-weight:800;color:var(--text);letter-spacing:-.03em">$' + Math.round(totalRev / 1000) + 'K</div><div style="font-size:10px;color:var(--t4)">annual</div>';
+        center.innerHTML = '<div style="font-size:22px;font-weight:800;color:var(--text);letter-spacing:-.03em">€' + Math.round(totalRev / 1000) + 'K</div><div style="font-size:10px;color:var(--t4)">annual</div>';
       }
     }
 
@@ -21235,11 +21311,11 @@ const ViewImpact = (() => {
       var t = totals[mode];
       var perWeek = Math.round(t / 52);
       if (mode === 'lo') {
-        hype.innerHTML = 'At the <strong style="color:var(--text)">lower bound</strong>, the program still delivers <strong style="color:var(--text)">$' + Math.round(t/1000) + 'K/yr</strong> ($' + perWeek.toLocaleString() + '/wk). This is the floor - the minimum return supported by the data at 95% confidence.';
+        hype.innerHTML = 'At the <strong style="color:var(--text)">lower bound</strong>, the program still delivers <strong style="color:var(--text)">€' + Math.round(t/1000) + 'K/yr</strong> (€' + perWeek.toLocaleString() + '/wk). This is the floor - the minimum return supported by the data at 95% confidence.';
       } else if (mode === 'hi') {
-        hype.innerHTML = 'At the <strong style="color:var(--text)">upper bound</strong>, the program could deliver <strong style="color:var(--text)">$' + Math.round(t/1000) + 'K/yr</strong> ($' + perWeek.toLocaleString() + '/wk). This ceiling is achievable if true effects sit at the top of their confidence intervals.';
+        hype.innerHTML = 'At the <strong style="color:var(--text)">upper bound</strong>, the program could deliver <strong style="color:var(--text)">€' + Math.round(t/1000) + 'K/yr</strong> (€' + perWeek.toLocaleString() + '/wk). This ceiling is achievable if true effects sit at the top of their confidence intervals.';
       } else {
-        hype.innerHTML = 'At 95% confidence, program revenue falls between <strong style="color:var(--text)">$' + Math.round(totals.lo/1000) + 'K</strong> and <strong style="color:var(--text)">$' + Math.round(totals.hi/1000) + 'K</strong>. The point estimate of <strong style="color:var(--text)">$' + Math.round(t/1000) + 'K</strong> represents the most likely outcome.';
+        hype.innerHTML = 'At 95% confidence, program revenue falls between <strong style="color:var(--text)">€' + Math.round(totals.lo/1000) + 'K</strong> and <strong style="color:var(--text)">€' + Math.round(totals.hi/1000) + 'K</strong>. The point estimate of <strong style="color:var(--text)">€' + Math.round(t/1000) + 'K</strong> represents the most likely outcome.';
       }
     }
   }
@@ -21419,7 +21495,7 @@ const ViewDecisions = (() => {
       var verdictColor = d.cl ? d.cl.color : 'var(--t4)';
       var verdictLabel = d.cl ? ({ 'auto-approve': 'Auto', 'predict': 'Predict', 'test': 'Test', 'block': 'Block' }[d.cl.verdict] || d.cl.verdict) : '-';
       var prob = d.cl ? d.cl.probability + '%' : '-';
-      var rev = d.cl && d.cl.predictedRev > 0 ? '$' + Math.round(d.cl.predictedRev / 1000) + 'K' : '-';
+      var rev = d.cl && d.cl.predictedRev > 0 ? '€' + Math.round(d.cl.predictedRev / 1000) + 'K' : '-';
 
       // Better outcome labels
       var outcomeText = d.outcomeLabel;
@@ -21654,7 +21730,7 @@ const ViewTeamInsights = (() => {
         h += '<div style="text-align:center;font-size:14px;font-weight:600;color:' + (p.accuracy !== null ? (p.accuracy >= 70 ? 'var(--green-d)' : p.accuracy >= 50 ? 'var(--amber-d)' : '#ff3b30') : 'var(--t4)') + '">' + (p.accuracy !== null ? p.accuracy + '%' : '-') + '</div>';
 
         // Revenue
-        h += '<div style="text-align:center;font-size:13px;font-weight:600;color:var(--green-d)">' + (p.rev > 0 ? '$' + Math.round(p.rev / 1000) + 'K' : '-') + '</div>';
+        h += '<div style="text-align:center;font-size:13px;font-weight:600;color:var(--green-d)">' + (p.rev > 0 ? '€' + Math.round(p.rev / 1000) + 'K' : '-') + '</div>';
 
         // Auto-approve count
         h += '<div style="text-align:center;font-size:13px;color:' + (p.clCounts['auto-approve'] > 0 ? '#34c759' : 'var(--t4)') + ';font-weight:500">' + (p.clCounts['auto-approve'] > 0 ? p.clCounts['auto-approve'] : '-') + '</div>';
@@ -21695,7 +21771,7 @@ const ViewTeamInsights = (() => {
         h += '<div style="text-align:center;font-size:14px;font-weight:600;color:' + (init.accuracy !== null ? (init.accuracy >= 70 ? 'var(--green-d)' : init.accuracy >= 50 ? 'var(--amber-d)' : '#ff3b30') : 'var(--t4)') + '">' + (init.accuracy !== null ? init.accuracy + '%' : '-') + '</div>';
 
         // Revenue
-        h += '<div style="text-align:center;font-size:13px;font-weight:600;color:var(--green-d)">' + (init.rev > 0 ? '$' + Math.round(init.rev / 1000) + 'K' : '-') + '</div>';
+        h += '<div style="text-align:center;font-size:13px;font-weight:600;color:var(--green-d)">' + (init.rev > 0 ? '€' + Math.round(init.rev / 1000) + 'K' : '-') + '</div>';
 
         // Coverage bar
         h += '<div style="text-align:center"><div style="font-size:12px;font-weight:600;color:' + (init.coverage >= 60 ? 'var(--green-d)' : init.coverage >= 30 ? 'var(--amber-d)' : 'var(--t3)') + '">' + init.coverage + '%</div></div>';
